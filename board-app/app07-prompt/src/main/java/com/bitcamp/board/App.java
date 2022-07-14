@@ -10,7 +10,7 @@ public class App {
     welcome();
     loop: while (true) {
       displayMenu();
-      int menuNo = Prompt.inputInt("메뉴를 선택하세요 [1..3] (0: 종료) ");
+      int menuNo = promptMenu();
       displyLine();
       
       switch (menuNo) {
@@ -25,7 +25,7 @@ public class App {
     } //while
 
     System.out.println("안녕히 가세요!");
-    Prompt.close();
+    prompt.close();
   } // main
 
   static void welcome() {
@@ -41,10 +41,15 @@ public class App {
     System.out.println("[  2: 게시글 상세보기]");
     System.out.println("[  3: 게시글 등록]");
     System.out.println();
+    System.out.println("메뉴를 선택하세요 [1..3] (0: 종료)" );
   }
 
   static void displyLine() {
     System.out.println("-----------------------------------------"); 
+  }
+  
+  static int promptMenu () {
+    return prompt.inputInt();
   }
 
   static void displyBlankLine() {
