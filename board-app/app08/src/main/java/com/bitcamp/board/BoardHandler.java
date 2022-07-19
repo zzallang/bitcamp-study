@@ -31,6 +31,7 @@ public class BoardHandler {
       System.out.printf("%d\t%s\t%d\t%s\t%s\n",
           board.no, board.title, board.viewCount, board.writer, dateStr);
     }
+
   }
 
   static void processDetail() {
@@ -58,8 +59,8 @@ public class BoardHandler {
     System.out.printf("내용: %s\n", board.content);
     System.out.printf("조회수: %d\n", board.viewCount);
     System.out.printf("작성자: %s\n", board.writer);
-    java.util.Date date = new java.util.Date(board.createdDate);
-    System.out.printf("등록일: %tY-%1$tm-%1$td %1$tH:%1$tM\n", date);
+    java.util.Date date = new java.util.Date(board.createdDate);   
+    System.out.printf("등록일: %tY-%1$tm-%1$td %1$tH:%1$tM\n", date);    
   }
 
   static void processInput() {
@@ -68,7 +69,7 @@ public class BoardHandler {
     // 배열의 크기를 초과하지 않았는지 검사한다.
     if (boardCount == SIZE) {
       System.out.println("게시글을 더이상 저장할 수 없습니다.");
-      return;
+      return;   
     }
 
     Board board = new Board();
@@ -83,47 +84,9 @@ public class BoardHandler {
     board.createdDate = System.currentTimeMillis();
 
     // 새로 만든 인스턴스 주소를 레퍼런스 배열에 저장한다.
+
     boards[boardCount] = board;
 
-    boardCount++;
-
-    System.out.println("게시글을 등록했습니다.");
-  }
-
-  static void processDelete() {
-    System.out.println("[게시글 삭제]");
-
-    int boardNo = Prompt.inputInt("삭제할 게시글 번호? ");
-
-    // 해당 번호의 게시글이 몇 번 배열에 들어 있는지 알아내기
-    int boardIndex = -1;
-    for (int i = 0; i < boardCount; i++) {
-      if (boards[i].no == boardNo) {
-        boardIndex = i;
-        break;
-      }
-    }
-
-    // 사용자가 입력한 번호에 해당하는 게시글을 못 찾았다면 
-    if (boardIndex == -1) {
-      System.out.println("해당 번호의 게시글이 없습니다!");
-      return;
-    }
-    // 삭제할 게시글의 다음 항목을 앞으로 당긴다.
-    for (int i = boardIndex + 1; i < boardCount; i++) {
-      boards[i-1] = boards[i];
-    }
-    // 게시글 개수를 1개 줄이고 맨 마지막 레퍼런스는 null 로 초기화 한다.
-    boards[--boardCount] = null;
-
-    System.out.println();
-    System.out.println("삭제하였습니다");
-
-  }
-
-  public static void processUpdate() {
-    System.out.println("[게시글 변경]");
-
-    int boardNo = Prompt.inputInt("변경할 게시글 번호? ");
+    boardCount++;  
   }
 }
