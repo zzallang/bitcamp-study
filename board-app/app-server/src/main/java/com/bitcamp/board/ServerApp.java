@@ -16,7 +16,7 @@ public class ServerApp {
     System.out.println();
     System.out.println("[게시글 데이터 관리 서버]");
 
-    try (ServerSocket serverSocket = new ServerSocket(8888)) {
+    try (ServerSocket serverSocket = new ServerSocket(8888);) {
 
       System.out.println("서버 소켓 준비 완료!");
       System.out.println();
