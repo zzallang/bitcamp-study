@@ -62,19 +62,3 @@ public class BoardDaoProxy {
   }
 }
 
-
-
-// dddd
-
-
-
-
-
-
-
-
-
-
-
-
-
