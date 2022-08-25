@@ -22,12 +22,12 @@ public class ServerApp {
     servletMap.put("diary",new BoardServlet("diary"));
     servletMap.put("member",new MemberServlet("member"));
 
-    // 로컬클래스
-    class RequestThread extends Thread {
+    // 스레드로 만드는 대신에 Thread가 실행할 수 있는 클래스로 변경한다.
+    class RequestRunnable implements Runnable {
 
       private Socket socket;
 
-      public RequestThread(Socket socket) {
+      public RequestRunnable(Socket socket) {
         this.socket = socket;
       }
 
@@ -44,9 +44,6 @@ public class ServerApp {
           // 클라이언트와 서버 사이에 정해진 규칙(protocol)에 따라 데이터를 주고 받는다.
           String dataName = in.readUTF();
 
-          // 로컬클래스는 바깥 메소드의 로 컬 변수를 자신의 멤버인 것 처럼 사용할 수 있다.
-          // 어떻게? => 컴파일러가 그것이 가능하도록 필드와 생성자에 파라미터를 자동으로 선언한다.
-          // 
           Servlet servlet = servletMap.get(dataName);
           if (servlet != null) {
             servlet.service(in, out);
@@ -72,14 +69,11 @@ public class ServerApp {
       System.out.println();
 
       while (true) {
-        // 클라이언트가 연결 되면,
         Socket socket = serverSocket.accept();
 
         // 클라이언트 요청을 처리할 스레드를 만든다.
-        RequestThread t = new RequestThread(socket);
-
         // main 실행 흐름에서 분리하여 별도의 실행 흐름으로 작업을 수행시킨다.
-        t.start();
+        new Thread(new RequestRunnable(socket)).start();
       }
     } catch (Exception e) {
       e.printStackTrace();
