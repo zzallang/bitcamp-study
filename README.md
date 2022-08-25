@@ -265,6 +265,8 @@ export PATH=${JAVA_HOME}/bin:$PATH
   - 039. JSON 형식으로 데이터 입출력하기: Gson 라이브러리 사용
   - 040. 네트워킹을 이용한 파일 공유: client/server app. 아키텍처로 전환
 
+### 교실 이전(8/12) 
+
 ### 30일(8/16) 
 
 - board-app 프로젝트 수행 
@@ -286,9 +288,46 @@ export PATH=${JAVA_HOME}/bin:$PATH
 
 - board-app 프로젝트 수행 
   - 041. Client/Server 리팩토링
+    - Hashtable, ArrayList 활용
+    - 클라이언트 연결을 순차적으로 처리
 - 컬렉션 API 사용법(com.eomcs.basic.ex03.*)(계속)
 
+### 33일(8/19) 
 
+- 아침 특강(com.eomcs.quiz)
+  - ex01.Test30: 
+- board-app 프로젝트 수행 
+  - 042. Proxy 패턴을 이용한 네트워킹 코드 캡슐화
+  - 043. Client/Server 공통 코드를 라이브러리 프로젝트로 분리하기
+  - 044. 통신 방식을 Stateful에서 Stateless로 변경하기
+- Proxy 패턴의 이해와 활용법
+- Connection-Oriented 통신과 Connectionless 통신 비교
+- Stateful 통신 방식과 Stateless 통신 방식 비교
+
+### 34일(8/22) 
+
+- 아침 특강(com.eomcs.quiz)
+  - ex01.Test31:
+  - ex02.Test12: 
+- board-app 프로젝트 수행 
+  - 045. Thread를 이용한 멀티 태스킹 구현하기: 동시 요청 처리하기
+- 네트워킹 사용법(com.eomcs.net.*)
+
+### 35일(8/23) 
+
+- 아침 특강(com.eomcs.quiz)
+  - ex01.Test32:
+- 네트워킹 사용법(com.eomcs.net.*)(계속)
+
+### 36일(8/24) 
+
+- 아침 특강(com.eomcs.quiz)
+  - ex01.Test33, 34, 35, 36:
+- 네트워킹 사용법(com.eomcs.net.*)(계속)
+- 스레드 사용법(com.eomcs.concurrent.*)
+  - 멀티 태스킹 기법: 멀티 프로세싱, 멀티 스레딩
+  - CPU 스케줄링, 컨텍스트 스위칭 
+  
 
 ## 구글 미트
 https://meet.google.com/uou-bbtj-qzf
