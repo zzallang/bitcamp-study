@@ -23,42 +23,6 @@ public class ServerApp {
     servletMap.put("member",new MemberServlet("member"));
 
     // 스레드로 만드는 대신에 Thread가 실행할 수 있는 클래스로 변경한다.
-    class RequestRunnable implements Runnable {
-
-      private Socket socket;
-
-      public RequestRunnable(Socket socket) {
-        this.socket = socket;
-      }
-
-      // 별도의 실행 흐름에서 수행할 작업 정의
-      @Override
-      public void run() {
-
-        try (Socket socket = this.socket;
-            DataInputStream in = new DataInputStream(socket.getInputStream());
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());) {
-
-          System.out.println("클라이언트와 연결 되었음!");
-
-          // 클라이언트와 서버 사이에 정해진 규칙(protocol)에 따라 데이터를 주고 받는다.
-          String dataName = in.readUTF();
-
-          Servlet servlet = servletMap.get(dataName);
-          if (servlet != null) {
-            servlet.service(in, out);
-          } else {
-            out.writeUTF("fail");
-          }
-
-          System.out.println("클라이언트와 연결을 끊었음!");
-
-        } catch (Exception e) {
-          System.out.println("클라이언트 요청 처리 중 오류 발생!");
-          e.printStackTrace();
-        }
-      }
-    } // 로컬클래스
 
     System.out.println();
     System.out.println("[게시글 데이터 관리 서버]");
@@ -69,11 +33,35 @@ public class ServerApp {
       System.out.println();
 
       while (true) {
-        Socket socket = serverSocket.accept();
+        new Thread(new Runnable() {
+          Socket socket = serverSocket.accept(); // 생성자가 호출될 때 실행
 
-        // 클라이언트 요청을 처리할 스레드를 만든다.
-        // main 실행 흐름에서 분리하여 별도의 실행 흐름으로 작업을 수행시킨다.
-        new Thread(new RequestRunnable(socket)).start();
+          @Override
+          public void run() {
+            try (Socket socket = this.socket;
+                DataInputStream in = new DataInputStream(socket.getInputStream());
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());) {
+
+              System.out.println("클라이언트와 연결 되었음!");
+
+              // 클라이언트와 서버 사이에 정해진 규칙(protocol)에 따라 데이터를 주고 받는다.
+              String dataName = in.readUTF();
+
+              Servlet servlet = servletMap.get(dataName);
+              if (servlet != null) {
+                servlet.service(in, out);
+              } else {
+                out.writeUTF("fail");
+              }
+
+              System.out.println("클라이언트와 연결을 끊었음!");
+
+            } catch (Exception e) {
+              System.out.println("클라이언트 요청 처리 중 오류 발생!");
+              e.printStackTrace();
+            }
+          }
+        }).start();
       }
     } catch (Exception e) {
       e.printStackTrace();
