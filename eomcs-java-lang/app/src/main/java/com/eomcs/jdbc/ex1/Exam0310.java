@@ -33,9 +33,9 @@ public class Exam0310 {
       // "DQL(Data Query Language)"
       // => select처럼 data를 조회하는 sql 명령을 말한다.
       //
-      int count = stmt.executeUpdate(
-          "insert into x_board(title,contents) values('제목10','내용')");
-      System.out.printf("%d 개 입력 성공!", count);
+      //      int count = stmt.executeUpdate(
+      //          "insert into x_board(title,contents) values('제목10','내용')");
+      //      System.out.printf("%d 개 입력 성공!", count);
     }
   }
 }

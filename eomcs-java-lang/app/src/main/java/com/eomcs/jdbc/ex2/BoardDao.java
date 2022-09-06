@@ -34,7 +34,7 @@ public class BoardDao {
 
       ArrayList<Board> list = new ArrayList<>();
       while (rs.next()) {
-        Board board = new Board();
+        Board board = new Board(); // 매번 새로운 보드 객체를 만들어야 하니 위에 두면 안됨 그렇게 되면 덮어쓰기 때문!
         board.setNo(rs.getInt("board_id"));
         board.setTitle(rs.getString("title"));
         board.setContent(rs.getString("contents"));
