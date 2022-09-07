@@ -52,7 +52,7 @@ public class MariaDBMemberDao {
     try (Connection con = DriverManager.getConnection(
         "jdbc:mariadb://localhost:3306/studydb","study","1111");
         PreparedStatement pstmt = con.prepareStatement(
-            "update app_member set name=?, email=?, pwd=sha2(?,256) where mno=?\"")) {
+            "update app_member set name=?, email=?, pwd=sha2(?,256) where mno=?")) {
 
       pstmt.setString(1, member.name);
       pstmt.setString(2, member.email);
