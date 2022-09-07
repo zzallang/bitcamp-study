@@ -18,3 +18,7 @@ insert into app_board(title,cont,pwd) values('제목101','내용',sha2('1111',25
 insert into app_board(title,cont,pwd) values('제목102','내용',sha2('1111',256));
 insert into app_board(title,cont,pwd) values('제목103','내용',sha2('',256));
 insert into app_board(title,cont,pwd) values('제목104','내용',sha2('',256));
+
+
+
+
