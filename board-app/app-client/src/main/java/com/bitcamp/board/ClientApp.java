@@ -22,8 +22,8 @@ public class ClientApp {
         Connection con = DriverManager.getConnection(
             "jdbc:mariadb://localhost:3306/studydb","study","1111")) {
 
-      System.out.println();
       System.out.println("[게시글 관리 클라이언트]");
+      System.out.println();
 
       welcome();
 
@@ -38,6 +38,7 @@ public class ClientApp {
 
       // "메인" 메뉴의 이름을 스택에 등록한다.
       breadcrumbMenu.push("메인");
+      System.out.println();
 
       // 메뉴명을 저장할 배열을 준비한다.
       String[] menus = {"게시판", "회원"};
