@@ -1,7 +1,6 @@
 package com.bitcamp.board.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -12,9 +11,9 @@ public class MariaDBBoardDao {
 
   Connection con;
 
-  public MariaDBBoardDao() throws Exception {
-    con = DriverManager.getConnection(
-        "jdbc:mariadb://localhost:3306/studydb","study","1111");
+  //  DAO가 사용할 의존 객체 Connection을 생성자의 파라미터로 받는다.
+  public MariaDBBoardDao(Connection con) {
+    this.con = con;
   }
 
   public int insert(Board board) throws Exception {
