@@ -13,7 +13,7 @@ public class MemberHandler extends AbstractHandler {
 
   private MariaDBMemberDao memberDao;
 
-  public MemberHandler() {
+  public MemberHandler() throws Exception {
     super(new String[] {"목록", "상세보기", "등록", "삭제", "변경"});
 
     memberDao = new MariaDBMemberDao();
