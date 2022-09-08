@@ -27,8 +27,8 @@ public class ClientApp {
 
       // 핸들러를 담을 컬렉션을 준비한다.
       ArrayList<Handler> handlers = new ArrayList<>();
-      handlers.add(new BoardHandler());
-      handlers.add(new MemberHandler());
+      handlers.add(new BoardHandler(con));
+      handlers.add(new MemberHandler(con));
 
       // "메인" 메뉴의 이름을 스택에 등록한다.
       breadcrumbMenu.push("메인");
