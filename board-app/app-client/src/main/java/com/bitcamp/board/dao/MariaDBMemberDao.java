@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.bitcamp.board.domain.Member;
 
-public class MariaDBMemberDao {
+public class MariaDBMemberDao implements MemberDao{
 
   Connection con;
 
@@ -17,18 +17,18 @@ public class MariaDBMemberDao {
     this.con = con;
   }
 
+  @Override
   public int insert(Member member) throws Exception {
     try (PreparedStatement pstmt = con.prepareStatement(
         "insert into app_member(name,email,pwd) values(?,?,sha2(?,256))")) {
-
       pstmt.setString(1, member.name);
       pstmt.setString(2, member.email);
       pstmt.setString(3, member.password);
-
       return pstmt.executeUpdate();
     }
   }
 
+  @Override
   public Member findByNo(int no) throws Exception {
     // try (java.lang.AutoCloseable) 타입의 변수만 가능 {}
 
@@ -51,6 +51,7 @@ public class MariaDBMemberDao {
 
 
 
+  @Override
   public int update(Member member) throws Exception {
     try (PreparedStatement pstmt = con.prepareStatement(
         "update app_member set name=?, email=?, pwd=sha2(?,256) where mno=?")) {
@@ -65,6 +66,7 @@ public class MariaDBMemberDao {
   }
 
 
+  @Override
   public int delete(int no) throws Exception {
     try (Connection con = DriverManager.getConnection(
         "jdbc:mariadb://localhost:3306/studydb","study","1111");
@@ -83,6 +85,7 @@ public class MariaDBMemberDao {
     }
   }
 
+  @Override
   public List<Member> findAll() throws Exception {
     try (PreparedStatement pstmt = con.prepareStatement(
         "select mno,name,email from app_member");
