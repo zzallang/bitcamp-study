@@ -141,5 +141,3 @@ public class BoardHandler extends AbstractHandler {
     }
   }
 }
-
-
