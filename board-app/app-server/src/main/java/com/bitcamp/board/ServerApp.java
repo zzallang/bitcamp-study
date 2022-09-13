@@ -63,7 +63,7 @@ public class ServerApp {
 
                 int mainMenuNo = Integer.parseInt(request); // 메뉴 번호를 숫자로 바꾸고
 
-                if (mainMenuNo >= 1 || mainMenuNo <= menus.length) { // 메뉴 번호가 유효할 때
+                if (mainMenuNo >= 1 && mainMenuNo <= menus.length) { // 메뉴 번호가 유효할 때
                   tempOut.println("해당 기능을 준비 중입니다");
 
                 } else {
