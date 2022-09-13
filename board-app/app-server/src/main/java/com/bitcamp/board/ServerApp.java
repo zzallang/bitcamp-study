@@ -31,13 +31,18 @@ public class ServerApp {
             PrintWriter tempOut = new PrintWriter(strOut);
 
             welcome(tempOut);
+            out.writeUTF(strOut.toString());
 
             while (true) {
               String request = in.readUTF();
+              if (request.equals("quit")) {
+                break;
+              }
+
               out.writeUTF(request);
             }
 
-            //            System.out.println("클라이언트에게 응답!");
+            System.out.println("클라이언트에게 접속 종료!");
 
           } catch (Exception e) {
             System.out.println("클라이언트와 통신 중 오류 발생");

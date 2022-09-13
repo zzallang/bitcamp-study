@@ -21,16 +21,17 @@ public class ClientApp {
 
       String reponse = null;
 
-      // 사용자의 입력 값을 서버에 전달한 후 서버에 응답을 출력한다.
       while (true) {
         reponse = in.readUTF();
         System.out.println(reponse);
 
-        String input = Prompt.inputString(">");
+        String input = Prompt.inputString("> ");
         out.writeUTF(input);
 
+        if (input.equals("quit")) {
+          break;
+        }
       }
-
 
     } catch (Exception e) {
       System.out.println("서버와 통신 중 오류 발생!");
