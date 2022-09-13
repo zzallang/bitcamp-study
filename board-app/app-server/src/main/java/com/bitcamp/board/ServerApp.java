@@ -162,7 +162,7 @@ public class ServerApp {
     }
 
     // 메뉴 번호 입력을 요구하는 문장 출력
-    out.printf("메뉴를 선택하세요[1..%d](0: 종료) ", menus.length);
+    out.printf("메뉴를 선택하세요[1..%d](quit: 종료) ", menus.length);
   }
 
   protected static void printTitle() {
