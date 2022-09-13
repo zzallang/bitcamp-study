@@ -6,15 +6,29 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Stack;
+import com.bitcamp.board.handler.BoardHandler;
+import com.bitcamp.board.handler.MemberHandler;
+import com.bitcamp.handler.Handler;
 
 public class ServerApp {
 
   public static Stack<String> breadcrumbMenu = new Stack<>();
 
+  // 메인 메뉴 목록 준비
+  static String[] menus = {"게시판", "회원"};
+
   public static void main(String[] args) {
+
     try (ServerSocket serverSocket = new ServerSocket(8888)) {
       System.out.println("서버 실행 중...");
+
+      // 핸들러를 담을 컬렉션을 준비한다.
+      ArrayList<Handler> handlers = new ArrayList<>();
+      handlers.add(new BoardHandler(null));
+      handlers.add(new MemberHandler(null));
+
 
       while (true) {
         Socket socket = serverSocket.accept();
@@ -27,27 +41,39 @@ public class ServerApp {
               DataInputStream in = new DataInputStream(socket.getInputStream())) {
             System.out.println("클라이언트 접속!");
 
-            boolean first = true;
-
-            while (true) {
-              StringWriter strOut = new StringWriter();
-              PrintWriter tempOut = new PrintWriter(strOut);
-
-              if (first) {
-                welcome(tempOut);
-                first = false;
-              }
-
+            // 접속 후 환영 메시지와 메인 메뉴를 출력한다.
+            try (StringWriter strOut = new StringWriter();
+                PrintWriter tempOut = new PrintWriter(strOut);) {
+              welcome(tempOut);
               printMainMenus(tempOut);
               out.writeUTF(strOut.toString());
-              // 클라이언트로 응답한 후에 새 출력 스트림으로 교체한다.
+            }
 
+            while (true) {
+              // 클라이언트가 보낸 요청을 읽는다.
               String request = in.readUTF();
               if (request.equals("quit")) {
                 break;
               }
 
-              out.writeUTF(request);
+              // 클라이언트에게 응답한다.
+              try (// 응답 내용을 출력할 임시 출력 스트림 준비
+                  StringWriter strOut = new StringWriter();
+                  PrintWriter tempOut = new PrintWriter(strOut);) {
+
+                int mainMenuNo = Integer.parseInt(request); // 메뉴 번호를 숫자로 바꾸고
+
+                if (mainMenuNo >= 1 || mainMenuNo <= menus.length) { // 메뉴 번호가 유효할 때
+                  tempOut.println("해당 기능을 준비 중입니다");
+
+                } else {
+                  tempOut.println("메뉴 번호가 옳지 않습니다!"); // 메뉴 번호가 유효하지 않을 때
+                }
+
+                printMainMenus(tempOut);
+
+                out.writeUTF(strOut.toString());
+              }
             }
 
             System.out.println("클라이언트에게 접속 종료!");
@@ -83,11 +109,6 @@ public class ServerApp {
       MariaDBMemberDao memberDao = new MariaDBMemberDao(con);
       MariaDBBoardDao boardDao = new MariaDBBoardDao(con);
 
-      // 핸들러를 담을 컬렉션을 준비한다.
-      ArrayList<Handler> handlers = new ArrayList<>();
-      handlers.add(new BoardHandler(boardDao));
-      handlers.add(new MemberHandler(memberDao));
-
       // "메인" 메뉴의 이름을 스택에 등록한다.
       breadcrumbMenu.push("메인");
       System.out.println();
@@ -101,14 +122,6 @@ public class ServerApp {
         System.out.println();
 
         try { // 특정 명령어에 대한 예외처리 try
-
-          if (mainMenuNo < 0 || mainMenuNo > menus.length) {
-            System.out.println("메뉴 번호가 옳지 않습니다!");
-            continue; // while 문의 조건 검사로 보낸다.
-
-          } else if (mainMenuNo == 0) {
-            break loop;
-          }
 
           // 메뉴에 진입할 때 breadcrumb 메뉴바에 그 메뉴를 등록한다.
           breadcrumbMenu.push(menus[mainMenuNo - 1]);
@@ -143,9 +156,6 @@ public class ServerApp {
 
 
   static void printMainMenus(PrintWriter out) {
-    // 메인 메뉴 목록 준비
-    String[] menus = {"게시판", "회원"};
-
     // 메뉴 목록 출력
     for (int i = 0; i < menus.length; i++) {
       out.printf("  %d: %s\n", i + 1, menus[i]);
