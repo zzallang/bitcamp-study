@@ -10,33 +10,45 @@ import java.util.Stack;
 
 public class ServerApp {
 
-  // breadcrumb 메뉴를 저장할 스택을 준비
   public static Stack<String> breadcrumbMenu = new Stack<>();
 
   public static void main(String[] args) {
     try (ServerSocket serverSocket = new ServerSocket(8888)) {
       System.out.println("서버 실행 중...");
 
-      try (Socket socket = serverSocket.accept()) {
-        DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-        DataInputStream in = new DataInputStream(socket.getInputStream());
-        System.out.println("클라이언트 접속!");
+      while (true) {
+        Socket socket = serverSocket.accept();
 
-        StringWriter strOut = new StringWriter();
-        PrintWriter tempOut = new PrintWriter(strOut);
+        new Thread(() -> {
+          // 스레드를 시작하는 순간, 별도의 실행 흐름에서 병행으로 실행된다.
 
-        welcome(tempOut);
+          try (
+              DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+              DataInputStream in = new DataInputStream(socket.getInputStream())) {
+            System.out.println("클라이언트 접속!");
 
-        // 클라이언트로 출력하기
-        out.writeUTF(strOut.toString());
+            StringWriter strOut = new StringWriter();
+            PrintWriter tempOut = new PrintWriter(strOut);
 
-        System.out.println("클라이언트에게 응답!");
-      } catch (Exception e) {
-        System.out.println("클라이언트와 통신 중 오류 발생");
-        e.printStackTrace();
+            welcome(tempOut);
+
+            // 클라이언트로 출력하기
+            out.writeUTF(strOut.toString());
+
+            // 클라이언트가 보낸 값을 그대로 돌려준다.
+            String request = in.readUTF();
+            out.writeUTF(request);
+
+            System.out.println("클라이언트에게 응답!");
+
+          } catch (Exception e) {
+            System.out.println("클라이언트와 통신 중 오류 발생");
+            e.printStackTrace();
+          }
+        }).start();
       }
 
-      System.out.println("서버 종료!");
+      //      System.out.println("서버 종료!");
 
     } catch (Exception e) {
       System.out.println("서버 실행 중 오류 발생!");
