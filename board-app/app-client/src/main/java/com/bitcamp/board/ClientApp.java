@@ -19,17 +19,17 @@ public class ClientApp {
         DataInputStream in = new DataInputStream(socket.getInputStream());
         DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
 
-      String line = null;
-
-      line = in.readUTF();
-      System.out.println(line);
+      String reponse = null;
 
       // 사용자의 입력 값을 서버에 전달한 후 서버에 응답을 출력한다.
-      String input = Prompt.inputString(">");
-      out.writeUTF(input);
+      while (true) {
+        reponse = in.readUTF();
+        System.out.println(reponse);
 
-      line = in.readUTF();
-      System.out.println(line);
+        String input = Prompt.inputString(">");
+        out.writeUTF(input);
+
+      }
 
 
     } catch (Exception e) {

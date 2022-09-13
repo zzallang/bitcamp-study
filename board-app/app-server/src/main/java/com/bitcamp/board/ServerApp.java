@@ -32,14 +32,12 @@ public class ServerApp {
 
             welcome(tempOut);
 
-            // 클라이언트로 출력하기
-            out.writeUTF(strOut.toString());
+            while (true) {
+              String request = in.readUTF();
+              out.writeUTF(request);
+            }
 
-            // 클라이언트가 보낸 값을 그대로 돌려준다.
-            String request = in.readUTF();
-            out.writeUTF(request);
-
-            System.out.println("클라이언트에게 응답!");
+            //            System.out.println("클라이언트에게 응답!");
 
           } catch (Exception e) {
             System.out.println("클라이언트와 통신 중 오류 발생");
