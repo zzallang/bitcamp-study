@@ -41,38 +41,46 @@ public class ServerApp {
               DataInputStream in = new DataInputStream(socket.getInputStream())) {
             System.out.println("클라이언트 접속!");
 
-            // 접속 후 환영 메시지와 메인 메뉴를 출력한다.
-            try (StringWriter strOut = new StringWriter();
-                PrintWriter tempOut = new PrintWriter(strOut);) {
-              welcome(tempOut);
-              printMainMenus(tempOut);
-              out.writeUTF(strOut.toString());
-            }
+            boolean first = true;
+            String errorMessage = null;
 
             while (true) {
+
+              // 메인 메뉴를 출력한다.
+              try (StringWriter strOut = new StringWriter();
+                  PrintWriter tempOut = new PrintWriter(strOut);) {
+
+                if (first) { // 최초 접속이면 환영 메시지도 출력한다.
+                  welcome(tempOut);
+                  first = false;
+                }
+
+                if (errorMessage != null) {
+                  tempOut.println(errorMessage);
+                  errorMessage = null;
+                }
+
+                printMainMenus(tempOut);
+                out.writeUTF(strOut.toString());
+              }
+
               // 클라이언트가 보낸 요청을 읽는다.
               String request = in.readUTF();
               if (request.equals("quit")) {
                 break;
               }
 
-              // 클라이언트에게 응답한다.
-              try (// 응답 내용을 출력할 임시 출력 스트림 준비
-                  StringWriter strOut = new StringWriter();
-                  PrintWriter tempOut = new PrintWriter(strOut);) {
-
-                int mainMenuNo = Integer.parseInt(request); // 메뉴 번호를 숫자로 바꾸고
-
-                if (mainMenuNo >= 1 && mainMenuNo <= menus.length) { // 메뉴 번호가 유효할 때
-                  tempOut.println("해당 기능을 준비 중입니다");
+              try {
+                int mainMenuNo = Integer.parseInt(request); 
+                if (mainMenuNo >= 1 && mainMenuNo <= menus.length) { 
+                  handlers.get(mainMenuNo - 1).execute(in, out);
 
                 } else {
-                  tempOut.println("메뉴 번호가 옳지 않습니다!"); // 메뉴 번호가 유효하지 않을 때
+                  throw new Exception ("해당 번호의 메뉴가 없습니다.");
                 }
 
-                printMainMenus(tempOut);
-
-                out.writeUTF(strOut.toString());
+              } catch (Exception e) {
+                errorMessage = String.format("실행 오류 : %s\n", e.getMessage());
               }
             }
 
@@ -126,9 +134,6 @@ public class ServerApp {
           // 메뉴에 진입할 때 breadcrumb 메뉴바에 그 메뉴를 등록한다.
           breadcrumbMenu.push(menus[mainMenuNo - 1]);
 
-          // 메뉴 번호로 Handler 레퍼런스에 들어있는 객체를 찾아 실행한다.
-          handlers.get(mainMenuNo - 1).execute();
-
           breadcrumbMenu.pop();
 
         } catch (Exception ex) {
@@ -162,7 +167,7 @@ public class ServerApp {
     }
 
     // 메뉴 번호 입력을 요구하는 문장 출력
-    out.printf("메뉴를 선택하세요[1..%d](quit: 종료) ", menus.length);
+    out.printf("\n 메뉴를 선택하세요[1..%d](quit: 종료)", menus.length);
   }
 
   protected static void printTitle() {
