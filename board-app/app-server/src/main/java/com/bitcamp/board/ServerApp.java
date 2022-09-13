@@ -27,13 +27,21 @@ public class ServerApp {
               DataInputStream in = new DataInputStream(socket.getInputStream())) {
             System.out.println("클라이언트 접속!");
 
-            StringWriter strOut = new StringWriter();
-            PrintWriter tempOut = new PrintWriter(strOut);
-
-            welcome(tempOut);
-            out.writeUTF(strOut.toString());
+            boolean first = true;
 
             while (true) {
+              StringWriter strOut = new StringWriter();
+              PrintWriter tempOut = new PrintWriter(strOut);
+
+              if (first) {
+                welcome(tempOut);
+                first = false;
+              }
+
+              printMainMenus(tempOut);
+              out.writeUTF(strOut.toString());
+              // 클라이언트로 응답한 후에 새 출력 스트림으로 교체한다.
+
               String request = in.readUTF();
               if (request.equals("quit")) {
                 break;
@@ -84,8 +92,6 @@ public class ServerApp {
       breadcrumbMenu.push("메인");
       System.out.println();
 
-      // 메뉴명을 저장할 배열을 준비한다.
-      String[] menus = {"게시판", "회원"};
 
       loop: while (true) {
 
@@ -95,8 +101,6 @@ public class ServerApp {
         System.out.println();
 
         try { // 특정 명령어에 대한 예외처리 try
-          int mainMenuNo = Prompt.inputInt(String.format(
-              "메뉴를 선택하세요[1..%d](0: 종료) ", handlers.size()));
 
           if (mainMenuNo < 0 || mainMenuNo > menus.length) {
             System.out.println("메뉴 번호가 옳지 않습니다!");
@@ -138,10 +142,17 @@ public class ServerApp {
   }
 
 
-  static void printMenus(String[] menus) {
+  static void printMainMenus(PrintWriter out) {
+    // 메인 메뉴 목록 준비
+    String[] menus = {"게시판", "회원"};
+
+    // 메뉴 목록 출력
     for (int i = 0; i < menus.length; i++) {
-      System.out.printf("  %d: %s\n", i + 1, menus[i]);
+      out.printf("  %d: %s\n", i + 1, menus[i]);
     }
+
+    // 메뉴 번호 입력을 요구하는 문장 출력
+    out.printf("메뉴를 선택하세요[1..%d](0: 종료) ", menus.length);
   }
 
   protected static void printTitle() {
