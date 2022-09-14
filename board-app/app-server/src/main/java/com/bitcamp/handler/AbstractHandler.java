@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import com.bitcamp.board.ServerApp;
+import com.bitcamp.util.BreadCrumb;
 
 // Handler 규격에 맞춰 서브 클래스에게 물려줄 공통 필드나 메서드를 구현한다.
 // 
@@ -40,31 +40,30 @@ public abstract class AbstractHandler implements Handler {
     out.println(); // 메뉴를 처리한 후 빈 줄 출력
   }
 
-  protected static void printTitle(PrintWriter out) {
-    StringBuilder builder = new StringBuilder();
-    for (String title : ServerApp.breadcrumbMenu) {
-      if (!builder.isEmpty()) {
-        builder.append(" > ");
-      }
-      builder.append(title);
-    }
-    out.printf("%s:\n", builder.toString());
-  }
-
   @Override
   public void execute(DataInputStream in, DataOutputStream out) throws Exception {
 
-    // 핸들러의 메뉴를 클라이언트에게 보낸다.
-    try (StringWriter strOut = new StringWriter();
-        PrintWriter tempOut = new PrintWriter(strOut)) {
+    // 현재 스레드를 위해 보관된 Breadcumb 객체를 꺼낸다.
+    BreadCrumb breadcrumb = BreadCrumb.getBreadCrumbOfCrrentThread();
 
-      //      printTitle(out);
-      printMenus(tempOut);
-      printBlankLine(tempOut);
-      out.writeUTF(strOut.toString());
-    }
+    String message = null;
 
     while (true) {
+
+      // 핸들러의 메뉴를 클라이언트에게 보낸다.
+      try (StringWriter strOut = new StringWriter();
+          PrintWriter tempOut = new PrintWriter(strOut)) {
+
+        if (message != null) {
+          tempOut.println(message);
+          message = null;
+        }
+        tempOut.println();
+        tempOut.println(breadcrumb.toString());
+        printMenus(tempOut);
+        printBlankLine(tempOut);
+        out.writeUTF(strOut.toString());
+      }
 
       // 클라이언트가 보낸 요청을 읽는다.
       String request = in.readUTF();
@@ -72,26 +71,18 @@ public abstract class AbstractHandler implements Handler {
         break;
       }
 
-      try (StringWriter strOut = new StringWriter();
-          PrintWriter tempOut = new PrintWriter(strOut)) {
+      // 클라이언트가 선택한 메뉴를 처리한다.
+      int menuNo = Integer.parseInt(request);
 
-        tempOut.println("해당 메뉴를 준비 중입니다."); // 게시글 출력
-
-        printBlankLine(tempOut);
-        printMenus(tempOut);
-        out.writeUTF(strOut.toString());
+      if (menuNo < 0 || menuNo > menus.length) {
+        message = "메뉴 번호가 옳지 않습니다!";
+        continue; 
       }
+
+      message = "해당 메뉴를 준비 중입니다."; // 게시글 출력
 
       /*
       try {
-
-        if (menuNo < 0 || menuNo > menus.length) {
-          System.out.println("메뉴 번호가 옳지 않습니다!");
-          continue; // while 문의 조건 검사로 보낸다.
-
-        } else if (menuNo == 0) {
-          return; // 메인 메뉴로 돌아간다.
-        }
 
         // 메뉴에 진입할 때 breadcrumb 메뉴바에 그 메뉴를 등록한다.
         ServerApp.breadcrumbMenu.push(menus[menuNo - 1]);

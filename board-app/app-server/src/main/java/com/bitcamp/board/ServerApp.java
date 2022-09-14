@@ -7,14 +7,12 @@ import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Stack;
 import com.bitcamp.board.handler.BoardHandler;
 import com.bitcamp.board.handler.MemberHandler;
 import com.bitcamp.handler.Handler;
+import com.bitcamp.util.BreadCrumb;
 
 public class ServerApp {
-
-  public static Stack<String> breadcrumbMenu = new Stack<>();
 
   // 메인 메뉴 목록 준비
   static String[] menus = {"게시판", "회원"};
@@ -41,6 +39,10 @@ public class ServerApp {
               DataInputStream in = new DataInputStream(socket.getInputStream())) {
             System.out.println("클라이언트 접속!");
 
+            // 접속한 클라이언트의 이동 경로를 보관할 breadcrumb 객체 준비
+            BreadCrumb breadcrumb = new BreadCrumb(); // 현재 스레드 보관소에 저장된다.
+            breadcrumb.put("메인");
+
             boolean first = true;
             String errorMessage = null;
 
@@ -60,6 +62,7 @@ public class ServerApp {
                   errorMessage = null;
                 }
 
+                tempOut.println(breadcrumb.toString()); // 메인 메뉴를 출력하기 전에 breadcrumb 메뉴를 먼저 출력
                 printMainMenus(tempOut);
                 out.writeUTF(strOut.toString());
               }
@@ -72,13 +75,19 @@ public class ServerApp {
 
               try {
                 int mainMenuNo = Integer.parseInt(request); 
+
                 if (mainMenuNo >= 1 && mainMenuNo <= menus.length) { 
+                  // 핸들러에 들어가기 전에 breadcrumb 메뉴에 하위 메뉴 이름을 추가한다.
+                  breadcrumb.put(menus[mainMenuNo - 1]);
+
                   handlers.get(mainMenuNo - 1).execute(in, out);
+
+                  // 다시 메인 메뉴로 돌아왔다면 breadcrumb 메뉴에서 한 단계 위로 올라간다.
+                  breadcrumb.pickUp();
 
                 } else {
                   throw new Exception ("해당 번호의 메뉴가 없습니다.");
                 }
-
               } catch (Exception e) {
                 errorMessage = String.format("실행 오류 : %s\n", e.getMessage());
               }
@@ -169,16 +178,4 @@ public class ServerApp {
     // 메뉴 번호 입력을 요구하는 문장 출력
     out.printf("\n 메뉴를 선택하세요[1..%d](quit: 종료)", menus.length);
   }
-
-  protected static void printTitle() {
-    StringBuilder builder = new StringBuilder();
-    for (String title : breadcrumbMenu) {
-      if (!builder.isEmpty()) {
-        builder.append(" > ");
-      }
-      builder.append(title);
-    }
-    System.out.printf("%s:\n", builder.toString());
-  }
-
 } 
