@@ -6,7 +6,13 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
+import com.bitcamp.board.dao.BoardDao;
+import com.bitcamp.board.dao.MariaDBBoardDao;
+import com.bitcamp.board.dao.MariaDBMemberDao;
+import com.bitcamp.board.dao.MemberDao;
 import com.bitcamp.board.handler.BoardHandler;
 import com.bitcamp.board.handler.MemberHandler;
 import com.bitcamp.handler.Handler;
@@ -20,15 +26,28 @@ public class ServerApp {
   ArrayList<Handler> handlers = new ArrayList<>();
 
   public static void main(String[] args) {
-    ServerApp app = new ServerApp(8888);
-    app.execute();
+    try {
+      ServerApp app = new ServerApp(8888);
+      app.execute();
+
+    } catch (Exception e) {
+      System.out.println("서버 실행 오류!");
+    }
   }
 
-  public ServerApp(int port) {
+  public ServerApp(int port) throws Exception {
     this.port = port;
 
-    handlers.add(new BoardHandler(null));
-    handlers.add(new MemberHandler(null));
+    // Dao가 사용할 Connection 객체 준비
+    Connection con = DriverManager.getConnection(
+        "jdbc:mariadb://localhost:3306/studydb","study","1111");
+
+    // DAO 객체를 준비한다.
+    BoardDao boardDao = new MariaDBBoardDao(con);
+    MemberDao memberDao = new MariaDBMemberDao(con);
+
+    handlers.add(new BoardHandler(boardDao));
+    handlers.add(new MemberHandler(memberDao));
   }
 
   public void execute() {
@@ -36,9 +55,7 @@ public class ServerApp {
       System.out.println("서버 실행 중...");
 
       while (true) {
-        // Socket socket = serverSocket.accept(); // 클라이언트 연결 대기 연결된 소켓 정보를 받고
         new Thread(new ServiceProcessor(serverSocket.accept())).start(); 
-        // 들고 클라이언트에게 응답을 처리하는 서비스프로세서를 만든 다음 스레드에 넘기고 서비스프로세서를 별도의 스레드로 실행
         System.out.println("클라이언트 접속!");
       } // 반복
       //      System.out.println("서버 종료!");
@@ -51,19 +68,11 @@ public class ServerApp {
 
   /*
   public static void main2(String[] args) {
-    try (
-        // Dao가 사용할 Connection 객체 준비
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/studydb","study","1111")) {
 
       System.out.println("[게시글 관리 클라이언트]");
       System.out.println();
 
       welcome();
-
-      // DAO 객체를 준비한다.
-      MariaDBMemberDao memberDao = new MariaDBMemberDao(con);
-      MariaDBBoardDao boardDao = new MariaDBBoardDao(con);
 
       // "메인" 메뉴의 이름을 스택에 등록한다.
       breadcrumbMenu.push("메인");
@@ -114,7 +123,7 @@ public class ServerApp {
   static void error (DataOutputStream out, Exception e) {
     try (StringWriter strOut = new StringWriter();
         PrintWriter tempOut = new PrintWriter(strOut);) {
-      tempOut.printf("실행 오류 : &s\n", e.getMessage());
+      tempOut.printf("실행 오류 : %s\n", e.getMessage());
       tempOut.println();
       out.writeUTF(strOut.toString());
     } catch (Exception e2) {
@@ -126,6 +135,8 @@ public class ServerApp {
   void printMainMenus(DataOutputStream out) throws Exception {
     try (StringWriter strOut = new StringWriter();
         PrintWriter tempOut = new PrintWriter(strOut);) {
+
+      tempOut.println(BreadCrumb.getBreadCrumbOfCrrentThread().toString());
 
       for (int i = 0; i < menus.length; i++) {
         tempOut.printf("  %d: %s\n", i + 1, menus[i]);
@@ -139,7 +150,7 @@ public class ServerApp {
   void processMainMenu(DataInputStream in, DataOutputStream out, String request) {
     try {
       int menuNo = Integer.parseInt(request);
-      if (menuNo <= 1 || menuNo > menus.length) {
+      if (menuNo < 1 || menuNo > menus.length) {
         throw new Exception ("메뉴 번호가 옳지 않습니다.");
       }
 
@@ -149,6 +160,9 @@ public class ServerApp {
       handlers.get(menuNo - 1).execute(in, out);
 
       breadcrumb.pickUp();
+
+      // 하위 메뉴에서 빠져나오면 현재의 경로를 출력한다.
+      out.writeUTF(breadcrumb.toString());
 
     } catch (Exception e) {
       error(out, e);
