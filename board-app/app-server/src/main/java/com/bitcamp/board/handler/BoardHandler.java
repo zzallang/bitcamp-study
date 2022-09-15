@@ -44,6 +44,7 @@ public class BoardHandler extends AbstractHandler {
 
     try (StringWriter strOut = new StringWriter();
         PrintWriter tempOut = new PrintWriter(strOut)) {
+
       List <Board> boards = boardDao.findAll();
 
       tempOut.println("번호 제목 조회수 작성자 등록일");
