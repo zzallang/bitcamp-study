@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import com.bitcamp.board.handler.ErrorHandler;
 import com.bitcamp.board.handler.WelcomeHandler;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -22,17 +23,22 @@ public class MiniWebServer {
         System.out.println("클라이언트가 요청함!");
 
         URI requestUri = exchange.getRequestURI();
-        System.out.println(requestUri.getPath());
-        System.out.println(requestUri.getQuery());
+
+        String path = requestUri.getPath();
 
         WelcomeHandler welcomeHandler = new WelcomeHandler();
+        ErrorHandler errorHandler = new ErrorHandler();
 
         byte[] bytes = null;
 
         try (StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter)) {
 
-          welcomeHandler.service(printWriter);
+          if (path.equals("/")) {
+            welcomeHandler.service(printWriter);
+          } else {
+            errorHandler.error(printWriter);
+          }
           bytes = stringWriter.toString().getBytes("UTF-8");
         }
 
