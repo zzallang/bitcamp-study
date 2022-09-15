@@ -2,7 +2,11 @@ package com.bitcamp.board;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetSocketAddress;
+import java.net.URI;
+import com.bitcamp.board.handler.WelcomeHandler;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -17,20 +21,22 @@ public class MiniWebServer {
       public void handle(HttpExchange exchange) throws IOException {
         System.out.println("클라이언트가 요청함!");
 
-        StringBuilder strBuilder= new StringBuilder();
-        strBuilder.append("<!DOCTYPE html>");
-        strBuilder.append("<html>");
-        strBuilder.append("<head>");
-        strBuilder.append("<meta charset=\"UTF-8\">");
-        strBuilder.append("<title>bitcamp</title>");
-        strBuilder.append("</head>");
-        strBuilder.append("<body>");
-        strBuilder.append("<h1>환영합니다!</h1>");
-        strBuilder.append("<p>비트캠프 게시판 관리 시스템 프로젝트입니다.</p>");
-        strBuilder.append("</body>");
-        strBuilder.append("</html>");
+        URI requestUri = exchange.getRequestURI();
+        System.out.println(requestUri.getScheme());
+        System.out.println(requestUri.getHost());
+        System.out.println(requestUri.getPort());
+        System.out.println(requestUri.getPath());
 
-        byte[] bytes = strBuilder.toString().getBytes("UTF-8");
+        WelcomeHandler welcomeHandler = new WelcomeHandler();
+
+        byte[] bytes = null;
+
+        try (StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter)) {
+
+          welcomeHandler.service(printWriter);
+          bytes = stringWriter.toString().getBytes("UTF-8");
+        }
 
         // 보내는 컨텐트의 MIME 타입이 무엇인지 응답 헤더에 추가한다.
         Headers responseHeaders = exchange.getResponseHeaders();
