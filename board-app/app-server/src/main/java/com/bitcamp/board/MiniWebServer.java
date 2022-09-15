@@ -22,10 +22,8 @@ public class MiniWebServer {
         System.out.println("클라이언트가 요청함!");
 
         URI requestUri = exchange.getRequestURI();
-        System.out.println(requestUri.getScheme());
-        System.out.println(requestUri.getHost());
-        System.out.println(requestUri.getPort());
         System.out.println(requestUri.getPath());
+        System.out.println(requestUri.getQuery());
 
         WelcomeHandler welcomeHandler = new WelcomeHandler();
 
