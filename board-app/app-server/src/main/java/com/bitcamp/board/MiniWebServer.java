@@ -17,12 +17,24 @@ public class MiniWebServer {
       public void handle(HttpExchange exchange) throws IOException {
         System.out.println("클라이언트가 요청함!");
 
-        String response = "ABCabc123가각간";
-        byte[] bytes = response.getBytes("UTF-8");
+        StringBuilder strBuilder= new StringBuilder();
+        strBuilder.append("<!DOCTYPE html>");
+        strBuilder.append("<html>");
+        strBuilder.append("<head>");
+        strBuilder.append("<meta charset=\"UTF-8\">");
+        strBuilder.append("<title>bitcamp</title>");
+        strBuilder.append("</head>");
+        strBuilder.append("<body>");
+        strBuilder.append("<h1>환영합니다!</h1>");
+        strBuilder.append("<p>비트캠프 게시판 관리 시스템 프로젝트입니다.</p>");
+        strBuilder.append("</body>");
+        strBuilder.append("</html>");
+
+        byte[] bytes = strBuilder.toString().getBytes("UTF-8");
 
         // 보내는 컨텐트의 MIME 타입이 무엇인지 응답 헤더에 추가한다.
         Headers responseHeaders = exchange.getResponseHeaders();
-        responseHeaders.add("Content-Type", "text/plain; charset=UTF-8");
+        responseHeaders.add("Content-Type", "text/html; charset=UTF-8");
 
         exchange.sendResponseHeaders(200, bytes.length);
 
