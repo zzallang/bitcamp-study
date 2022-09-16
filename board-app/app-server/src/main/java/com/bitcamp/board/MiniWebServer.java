@@ -16,19 +16,18 @@ import com.bitcamp.board.dao.MariaDBBoardDao;
 import com.bitcamp.board.dao.MariaDBMemberDao;
 import com.bitcamp.board.dao.MemberDao;
 import com.bitcamp.board.handler.BoardAddHandler;
-import com.bitcamp.board.handler.BoardDeleteHandler;
 import com.bitcamp.board.handler.BoardDetailHandler;
 import com.bitcamp.board.handler.BoardFormHandler;
 import com.bitcamp.board.handler.BoardListHandler;
 import com.bitcamp.board.handler.BoardUpdateHandler;
 import com.bitcamp.board.handler.ErrorHandler;
 import com.bitcamp.board.handler.MemberAddHandler;
-import com.bitcamp.board.handler.MemberDeleteHandler;
 import com.bitcamp.board.handler.MemberDetailHandler;
 import com.bitcamp.board.handler.MemberFormHandler;
 import com.bitcamp.board.handler.MemberListHandler;
 import com.bitcamp.board.handler.MemberUpdateHandler;
 import com.bitcamp.board.handler.WelcomeHandler;
+import com.bitcamp.board.servlet.Servlet;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -46,22 +45,23 @@ public class MiniWebServer {
     BoardDao boardDao = new MariaDBBoardDao(con);
     MemberDao memberDao = new MariaDBMemberDao(con);
 
-    WelcomeHandler welcomeHandler = new WelcomeHandler();
+    // 서블릿 객체를 보관할 맵을 준비
+    Map<String,Servlet> servletMap = new HashMap<>();
+    servletMap.put("/", new WelcomeHandler());
+    servletMap.put("/board/form", new BoardFormHandler());
+    servletMap.put("/board/add", new BoardAddHandler(boardDao));
+    servletMap.put("/board/list", new BoardListHandler(boardDao));
+    servletMap.put("/board/detail", new BoardDetailHandler(boardDao));
+    servletMap.put("/board/update", new BoardUpdateHandler(boardDao));
+    servletMap.put("/board/delete", new BoardAddHandler(boardDao));
+    servletMap.put("/member/form", new MemberFormHandler());
+    servletMap.put("/member/add", new MemberAddHandler(memberDao));
+    servletMap.put("/member/list", new MemberListHandler(memberDao));
+    servletMap.put("/member/detail", new MemberDetailHandler(memberDao));
+    servletMap.put("/member/update", new MemberUpdateHandler(memberDao));
+    servletMap.put("/member/delete", new MemberAddHandler(memberDao));
+
     ErrorHandler errorHandler = new ErrorHandler();
-
-    BoardFormHandler boardFormHandler = new BoardFormHandler();
-    BoardAddHandler boardAddHandler = new BoardAddHandler(boardDao);
-    BoardListHandler boardListHandler = new BoardListHandler(boardDao);
-    BoardDetailHandler boardDetailHandler = new BoardDetailHandler(boardDao);
-    BoardUpdateHandler boardUpdateHandler = new BoardUpdateHandler(boardDao);
-    BoardDeleteHandler boardDeleteHandler = new BoardDeleteHandler(boardDao);
-
-    MemberFormHandler memberFormHandler = new MemberFormHandler();
-    MemberAddHandler memberAddHandler = new MemberAddHandler(memberDao);
-    MemberListHandler memberListHandler = new MemberListHandler(memberDao);
-    MemberDetailHandler memberDetailHandler = new MemberDetailHandler(memberDao);
-    MemberUpdateHandler memberUpdateHandler = new MemberUpdateHandler(memberDao);
-    MemberDeleteHandler memberDeleteHandler = new MemberDeleteHandler(memberDao);
 
     class MyHttpHandler implements HttpHandler {
       @Override
@@ -87,51 +87,14 @@ public class MiniWebServer {
             }
           }
 
-          System.out.println(path);
-          System.out.println(query);
           System.out.println(paramMap);
 
-          if (path.equals("/")) {
-            welcomeHandler.service(paramMap, printWriter);
+          Servlet servlet = servletMap.get(path);
 
-          } else if (path.equals("/board/list")) {
-            boardListHandler.list(paramMap, printWriter);
-
-          } else if (path.equals("/board/detail")) {
-            boardDetailHandler.detail(paramMap, printWriter);
-
-          } else if (path.equals("/board/update")) {
-            boardUpdateHandler.update(paramMap, printWriter);
-
-          } else if (path.equals("/board/delete")) {
-            boardDeleteHandler.delete(paramMap, printWriter);
-
-          } else if (path.equals("/board/form")) {
-            boardFormHandler.form(paramMap, printWriter);
-
-          } else if (path.equals("/board/add")) {
-            boardAddHandler.add(paramMap, printWriter);
-
-          } else if (path.equals("/member/list")) {
-            memberListHandler.list(paramMap, printWriter);
-
-          } else if (path.equals("/member/detail")) {
-            memberDetailHandler.detail(paramMap, printWriter);
-
-          } else if (path.equals("/member/update")) {
-            memberUpdateHandler.update(paramMap, printWriter);
-
-          } else if (path.equals("/member/delete")) {
-            memberDeleteHandler.delete(paramMap, printWriter);
-
-          } else if (path.equals("/member/form")) {
-            memberFormHandler.form(paramMap, printWriter);
-
-          } else if (path.equals("/member/add")) {
-            memberAddHandler.add(paramMap, printWriter);
-
+          if (servlet != null) {
+            servlet.service(paramMap, printWriter);
           } else {
-            errorHandler.error(paramMap, printWriter);
+            errorHandler.service(paramMap, printWriter);
           }
 
           bytes = stringWriter.toString().getBytes("UTF-8");
