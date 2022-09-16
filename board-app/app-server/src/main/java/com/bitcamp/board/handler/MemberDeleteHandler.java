@@ -6,8 +6,9 @@ package com.bitcamp.board.handler;
 import java.io.PrintWriter;
 import java.util.Map;
 import com.bitcamp.board.dao.MemberDao;
+import com.bitcamp.board.servlet.Servlet;
 
-public class MemberDeleteHandler{
+public class MemberDeleteHandler implements Servlet {
 
   private MemberDao memberDao;
 
@@ -15,7 +16,8 @@ public class MemberDeleteHandler{
     this.memberDao = memberDao;
   }
 
-  public void delete(Map<String,String> paramMap, PrintWriter out) throws Exception {
+  @Override
+  public void service(Map<String,String> paramMap, PrintWriter out) throws Exception {
 
     out.println("<!DOCTYPE html>");
     out.println("<html>");
