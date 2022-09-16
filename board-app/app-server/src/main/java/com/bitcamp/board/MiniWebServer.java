@@ -6,6 +6,16 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.HashMap;
+import java.util.Map;
+import com.bitcamp.board.dao.BoardDao;
+import com.bitcamp.board.dao.MariaDBBoardDao;
+import com.bitcamp.board.dao.MariaDBMemberDao;
+import com.bitcamp.board.dao.MemberDao;
+import com.bitcamp.board.handler.BoardHandler;
 import com.bitcamp.board.handler.ErrorHandler;
 import com.bitcamp.board.handler.WelcomeHandler;
 import com.sun.net.httpserver.Headers;
@@ -17,29 +27,76 @@ public class MiniWebServer {
 
   public static void main(String[] args) throws Exception {
 
+    // Dao가 사용할 Connection 객체 준비
+    Connection con = DriverManager.getConnection(
+        "jdbc:mariadb://localhost:3306/studydb","study","1111");
+
+    // DAO 객체를 준비한다.
+    BoardDao boardDao = new MariaDBBoardDao(con);
+    MemberDao memberDao = new MariaDBMemberDao(con);
+
+    WelcomeHandler welcomeHandler = new WelcomeHandler();
+    ErrorHandler errorHandler = new ErrorHandler();
+    BoardHandler boardHandler = new BoardHandler(boardDao);
+
     class MyHttpHandler implements HttpHandler {
       @Override
       public void handle(HttpExchange exchange) throws IOException {
         System.out.println("클라이언트가 요청함!");
 
         URI requestUri = exchange.getRequestURI();
-
         String path = requestUri.getPath();
-
-        WelcomeHandler welcomeHandler = new WelcomeHandler();
-        ErrorHandler errorHandler = new ErrorHandler();
-
+        //        String query = requestUri.getQuery(); // 디코딩을 제대로 수행하지 못한다!
+        String query = requestUri.getRawQuery(); // 디코딩 없이 query string을 그대로 리턴 받기!
         byte[] bytes = null;
 
         try (StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter)) {
 
-          if (path.equals("/")) {
-            welcomeHandler.service(printWriter);
-          } else {
-            errorHandler.error(printWriter);
+          Map<String,String> paramMap = new HashMap<>();
+          if (query != null && query.length() > 0) { // 예) no=2&title=aaaa&content=bbb
+            String[] entries = query.split("&");
+            for (String entry : entries) { // 예) no=1
+              String[] kv = entry.split("=");
+              // 웹브라우저가 보낸 파라미터 값은 저장하기 전에 URL 디코딩한다.
+              paramMap.put(kv[0], URLDecoder.decode(kv[1],"UTF-8"));
+            }
           }
+
+          System.out.println(path);
+          System.out.println(query);
+          System.out.println(paramMap);
+
+          if (path.equals("/")) {
+            welcomeHandler.service(paramMap, printWriter);
+
+          } else if (path.equals("/board/list")) {
+            boardHandler.list(paramMap, printWriter);
+
+          } else if (path.equals("/board/detail")) {
+            boardHandler.detail(paramMap, printWriter);
+
+          } else if (path.equals("/board/update")) {
+            boardHandler.update(paramMap, printWriter);
+
+          } else if (path.equals("/board/delete")) {
+            boardHandler.delete(paramMap, printWriter);
+
+          } else if (path.equals("/board/form")) {
+            boardHandler.form(paramMap, printWriter);
+
+          } else if (path.equals("/board/add")) {
+            boardHandler.add(paramMap, printWriter);
+
+          } else {
+            errorHandler.error(paramMap, printWriter);
+          }
+
           bytes = stringWriter.toString().getBytes("UTF-8");
+
+        } catch (Exception e) {
+          bytes = "요청 처리 중 요루 발생!".getBytes("UTF-8");
+          e.printStackTrace(); // 서버 콘솔 창에 요류에 대한 자세한 내용을 출력한다.
         }
 
         // 보내는 컨텐트의 MIME 타입이 무엇인지 응답 헤더에 추가한다.
