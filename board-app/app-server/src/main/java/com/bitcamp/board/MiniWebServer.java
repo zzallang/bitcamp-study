@@ -16,12 +16,14 @@ import com.bitcamp.board.dao.MariaDBBoardDao;
 import com.bitcamp.board.dao.MariaDBMemberDao;
 import com.bitcamp.board.dao.MemberDao;
 import com.bitcamp.board.handler.BoardAddHandler;
+import com.bitcamp.board.handler.BoardDeleteHandler;
 import com.bitcamp.board.handler.BoardDetailHandler;
 import com.bitcamp.board.handler.BoardFormHandler;
 import com.bitcamp.board.handler.BoardListHandler;
 import com.bitcamp.board.handler.BoardUpdateHandler;
 import com.bitcamp.board.handler.ErrorHandler;
 import com.bitcamp.board.handler.MemberAddHandler;
+import com.bitcamp.board.handler.MemberDeleteHandler;
 import com.bitcamp.board.handler.MemberDetailHandler;
 import com.bitcamp.board.handler.MemberFormHandler;
 import com.bitcamp.board.handler.MemberListHandler;
@@ -53,13 +55,13 @@ public class MiniWebServer {
     servletMap.put("/board/list", new BoardListHandler(boardDao));
     servletMap.put("/board/detail", new BoardDetailHandler(boardDao));
     servletMap.put("/board/update", new BoardUpdateHandler(boardDao));
-    servletMap.put("/board/delete", new BoardAddHandler(boardDao));
+    servletMap.put("/board/delete", new BoardDeleteHandler(boardDao));
     servletMap.put("/member/form", new MemberFormHandler());
     servletMap.put("/member/add", new MemberAddHandler(memberDao));
     servletMap.put("/member/list", new MemberListHandler(memberDao));
     servletMap.put("/member/detail", new MemberDetailHandler(memberDao));
     servletMap.put("/member/update", new MemberUpdateHandler(memberDao));
-    servletMap.put("/member/delete", new MemberAddHandler(memberDao));
+    servletMap.put("/member/delete", new MemberDeleteHandler(memberDao));
 
     ErrorHandler errorHandler = new ErrorHandler();
 
