@@ -1,12 +1,12 @@
 /*
- * 게시글 메뉴 처리 클래스
+ * 회원 메뉴 처리 클래스
  */
 package com.bitcamp.board.handler;
 
 import java.io.PrintWriter;
 import java.util.Map;
 
-public class BoardFormHandler {
+public class MemberFormHandler{
 
   public void form(Map<String, String> paramMap, PrintWriter out) {
 
@@ -17,18 +17,18 @@ public class BoardFormHandler {
     out.println("<title>bitcamp</title>");
     out.println("</head>");
     out.println("<body>");
-    out.println("<h1>게시글 등록</h1>");
+    out.println("<h1>회원 등록</h1>");
 
     out.println("<form action='add'>");
     out.println("<table border='1'>");
     out.println("  <tr>");
-    out.println("    <th>제목</th><td><input name='title' type='text' size='60'></td>");
+    out.println("    <th>이름</th><td><textarea name='name' type='text' size='60'></textarea></td>");
     out.println("  </tr>");
     out.println("  <tr>");
-    out.println("    <th>내용</th><td><textarea name='content' rows='10' cols='60'></textarea></td>");
+    out.println("    <th>이메일</th><td><input name='email' type='email' size='60'></td>");
     out.println("  </tr>");
     out.println("  <tr>");
-    out.println("    <th>작성자</th><td><input name='writerNo' type='number' size='5'></td>");
+    out.println("    <th>암호</th><td><input name='password' type='password' size='20'></td>");
     out.println("  </tr>");
     out.println("</table>");
     out.println("<p>");
