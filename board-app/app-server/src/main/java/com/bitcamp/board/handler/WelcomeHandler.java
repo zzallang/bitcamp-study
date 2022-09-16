@@ -3,7 +3,9 @@ package com.bitcamp.board.handler;
 import java.io.PrintWriter;
 import java.util.Map;
 import com.bitcamp.board.servlet.Servlet;
+import com.bitcamp.board.servlet.annotaion.WebServlet;
 
+@WebServlet(value="/")
 public class WelcomeHandler implements Servlet{
 
   @Override

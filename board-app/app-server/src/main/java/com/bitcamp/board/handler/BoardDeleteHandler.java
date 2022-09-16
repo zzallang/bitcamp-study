@@ -7,7 +7,9 @@ import java.io.PrintWriter;
 import java.util.Map;
 import com.bitcamp.board.dao.BoardDao;
 import com.bitcamp.board.servlet.Servlet;
+import com.bitcamp.board.servlet.annotaion.WebServlet;
 
+@WebServlet(value="/board/deledte")
 public class BoardDeleteHandler implements Servlet {
 
   private BoardDao boardDao;
