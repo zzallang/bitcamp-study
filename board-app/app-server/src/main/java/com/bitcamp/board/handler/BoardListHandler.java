@@ -59,6 +59,7 @@ public class BoardListHandler implements Servlet {
     }
 
     out.println("</table>");
+    out.println("<p><a href='/'>메인</a></p>");
     out.println("</body>");
     out.println("</html>");
   }
