@@ -25,7 +25,7 @@ public class MiniWebServer {
 
         URI requestUri = exchange.getRequestURI();
         String path = requestUri.getPath();
-        String query = requestUri.getRawQuery();
+        String query = requestUri.getRawQuery();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
         byte[] bytes = null;
 
         try (StringWriter stringWriter = new StringWriter();
