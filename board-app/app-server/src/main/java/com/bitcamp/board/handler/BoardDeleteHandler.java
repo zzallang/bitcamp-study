@@ -9,7 +9,7 @@ import com.bitcamp.board.dao.BoardDao;
 import com.bitcamp.board.servlet.Servlet;
 import com.bitcamp.board.servlet.annotaion.WebServlet;
 
-@WebServlet(value="/board/deledte")
+@WebServlet(value="/board/delete")
 public class BoardDeleteHandler implements Servlet {
 
   private BoardDao boardDao;
@@ -34,10 +34,10 @@ public class BoardDeleteHandler implements Servlet {
     int no = Integer.parseInt(paramMap.get("no"));
 
     if (boardDao.delete(no) == 0) {
-      out.println("<p>해당 번호의 게시글을 삭제했습니다.</p>");
+      out.println("<p>해당 번호의 게시글이 없습니다.</p>");
 
     } else {
-      out.println("<p>해당 번호의 게시글이 없습니다.</p>");
+      out.println("<p>해당 번호의 게시글을 삭제했습니다.</p>");
     }
 
     out.println("</body>");

@@ -12,6 +12,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -51,10 +52,10 @@ public class MiniWebServer {
     }
      */
 
-    Set<Class<?>> servlets = reflections.get(TypesAnnotated.with(WebServlet.class).asClass());
+    Set<Class<?>> servlets = reflections.get(TypesAnnotated.with(WebServlet.class).asClass()); // 얘가 리턴한 클래스를 가지고 클래스를 로딩하라 as
     for (Class<?> servlet : servlets) {
-      WebServlet anno = servlet.getAnnotation(WebServlet.class);
-      System.out.printf("%s ---> %s\n", anno.value(), servlet.getName());
+      WebServlet anno = servlet.getAnnotation(WebServlet.class); // 애노테이션 정보 꺼내서 
+      System.out.printf("%s ---> %s\n", anno.value(), servlet.getName()); // 
     }
   }
 
@@ -69,31 +70,36 @@ public class MiniWebServer {
     BoardDao boardDao = new MariaDBBoardDao(con);
     MemberDao memberDao = new MariaDBMemberDao(con);
 
-    // 서블릿 객체를 보관할 맵을 준비
-    Map<String,Servlet> servletMap = new HashMap<>();
+    // 객체(DAO, Servlet)를 보관할 맵을 준비
+    Map<String,Object> objMap = new HashMap<>();
+
+    // DAO 객체를 맵에 보관한다.
+    objMap.put("boardDao", boardDao);
+    objMap.put("memberDao", memberDao);
 
     // WebServlet 애노테이션이 붙은 클래스를 찾아 객체를 생성한 후 맵에 저장한다.
     // 맵에 저장할 때 사용할 key는 WebServlet 애노테이션에 설정된 값이다.
 
-    Reflections reflections = new Reflections("com.bitcamp.board");
-    Set<Class<?>> servlets = reflections.get(TypesAnnotated.with(WebServlet.class).asClass());
+    Reflections reflections = new Reflections("com.bitcamp.board"); // 이 밑에서 다 찾아!
+    Set<Class<?>> servlets = reflections.get(TypesAnnotated.with(WebServlet.class).asClass()); // 야, 찾아줘 / with 안에 애노테이션 정보 지정
     for (Class<?> servlet : servlets) {
       // 서블릿 클래스의 붙은 WebServlet 애노테이션으로부터 path를 꺼낸다
       String servletPath = servlet.getAnnotation(WebServlet.class).value();
 
       // 생성자의 파라미터의 타입을 알아내 해당 객체를 주입한다.
       Constructor<?> constructor = servlet.getConstructors()[0];
-      Parameter[] params = constructor.getParameters();
+      Parameter[] params = constructor.getParameters(); // 생성자가 몇개가 있냐?
 
-      if (params.length == 0) { // 생성자의 파라미터가 없다면
-        servletMap.put(servletPath, (Servlet) constructor.newInstance());
-        System.out.println(servlet.getName());
+      if (params.length == 0) { // 생성자의 파라미터가 없다면, 즉 기본 생성자라면
+        objMap.put(servletPath, constructor.newInstance()); 
+        // 생성자 객체에 new Instance()가 있는데 이 생성자의 클래스 정보를 바탕으로 인스턴스를 생성해서 인스턴스 주소를 리턴하는 일을 한다
 
-      } else if (params[0].getType() == BoardDao.class) { // 파라미터 타입이 보드디예요야?
-        servletMap.put(servletPath, (Servlet) constructor.newInstance(boardDao));
-
-      } else if (params[0].getType() == MemberDao.class) { // 아니면 멤버디예요야?
-        servletMap.put(servletPath, (Servlet) constructor.newInstance(memberDao));
+      } else { // 생성자의 파라미터가 있다면, 해당 파라미터 타입과 일치하는 객체를 찾는다.
+        Object argument = findObject(objMap, params[0].getType());
+        if (argument != null) { // 생성자의 파라미터 타입과 일치하는 객체를 찾았다면
+          // 해당 객체를 가지고 생성자를 호출하여 인스턴스를 생성한다.
+          objMap.put(servletPath, constructor.newInstance(argument));
+        }
       }
     }
 
@@ -125,7 +131,7 @@ public class MiniWebServer {
 
           System.out.println(paramMap);
 
-          Servlet servlet = servletMap.get(path);
+          Servlet servlet = (Servlet) objMap.get(path);
 
           if (servlet != null) {
             servlet.service(paramMap, printWriter);
@@ -158,6 +164,21 @@ public class MiniWebServer {
     server.start();
 
     System.out.println("서버 시작!");
+  }
+
+
+  private static Object findObject(Map<String, Object> objMap, Class<?> type) {
+
+    // 맵에 들어있는 객체를 모두 꺼낸다.
+    Collection<Object> values = objMap.values();
+
+    // 꺼낸 객체들 중에 해당 타입의 인스턴스가 있는지 알아 본다.
+    for (Object value : values) {
+      if (type.isInstance(value)) { // 주어진 타입과 일치하는 객체를 찾았다면
+        return value; // 해당 객체를 리턴한다
+      }
+    }
+    return null; // 못찾았으면 null을 리턴한다.
   }
 
 }
