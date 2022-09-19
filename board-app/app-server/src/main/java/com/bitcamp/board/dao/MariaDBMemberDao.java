@@ -51,8 +51,6 @@ public class MariaDBMemberDao implements MemberDao{
     }
   }
 
-
-
   @Override
   public int update(Member member) throws Exception {
     try (PreparedStatement pstmt = con.prepareStatement(

@@ -71,8 +71,6 @@ public class MariaDBBoardDao implements BoardDao {
     try (PreparedStatement pstmt = con.prepareStatement("delete from app_board where bno=?")) {
 
       pstmt.setInt(1, no);
-      pstmt.executeUpdate();
-
       return pstmt.executeUpdate();
     }
   }

@@ -34,11 +34,10 @@ public class MiniWebServer {
           // 애플리케이션을 찾아 실행하는 것을 ApplicationContainer에게 위임한다.
           appContainer.execute(path, query, printWriter);
 
-
           bytes = stringWriter.toString().getBytes("UTF-8");
 
         } catch (Exception e) {
-          bytes = "요청 처리 중 요루 발생!".getBytes("UTF-8");
+          bytes = "요청 처리 중 오류 발생!".getBytes("UTF-8");
           e.printStackTrace();
         }
 
