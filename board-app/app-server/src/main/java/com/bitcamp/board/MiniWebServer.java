@@ -79,8 +79,9 @@ public class MiniWebServer {
     }
 
     // WebServlet 애노테이션이 붙은 클래스를 찾아 객체를 생성한 후 맵에 저장한다.
-    // 맵에 저장할 때 사용할 key는 WebServlet 애노테이션에 설정된 값이다.
 
+    // 맵에 저장할 때 사용할 key는 WebServlet 애노테이션에 설정된 값이다.
+    Set<Class<?>> servlets = reflections.get(TypesAnnotated.with(WebServlet.class).asClass()); 
     for (Class<?> servlet : servlets) {
       // 서블릿 클래스의 붙은 WebServlet 애노테이션으로부터 path를 꺼낸다
       String servletPath = servlet.getAnnotation(WebServlet.class).value();
