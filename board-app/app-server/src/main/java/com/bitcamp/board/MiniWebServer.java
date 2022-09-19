@@ -23,6 +23,7 @@ import com.bitcamp.board.dao.MariaDBMemberDao;
 import com.bitcamp.board.dao.MemberDao;
 import com.bitcamp.board.handler.ErrorHandler;
 import com.bitcamp.board.servlet.Servlet;
+import com.bitcamp.board.servlet.annotaion.Repository;
 import com.bitcamp.board.servlet.annotaion.WebServlet;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -66,33 +67,30 @@ public class MiniWebServer {
     Connection con = DriverManager.getConnection(
         "jdbc:mariadb://localhost:3306/studydb","study","1111");
 
-    // DAO 객체를 준비한다.
-    BoardDao boardDao = new MariaDBBoardDao(con);
-    MemberDao memberDao = new MariaDBMemberDao(con);
-
     // 객체(DAO, Servlet)를 보관할 맵을 준비
     Map<String,Object> objMap = new HashMap<>();
 
-    // DAO 객체를 맵에 보관한다.
-    objMap.put("boardDao", boardDao);
-    objMap.put("memberDao", memberDao);
+    Reflections reflections = new Reflections("com.bitcamp.board"); 
+    Set<Class<?>> classes = reflections.get(TypesAnnotated.with(Repository.class).asClass()); 
+    for (Class<?> clazz : classes) {
+      String objName = clazz.getAnnotation(Repository.class).value();
+      Constructor<?> constructor = clazz.getConstructor(Connection.class);
+      objMap.put(objName, constructor.newInstance(con));
+    }
 
     // WebServlet 애노테이션이 붙은 클래스를 찾아 객체를 생성한 후 맵에 저장한다.
     // 맵에 저장할 때 사용할 key는 WebServlet 애노테이션에 설정된 값이다.
 
-    Reflections reflections = new Reflections("com.bitcamp.board"); // 이 밑에서 다 찾아!
-    Set<Class<?>> servlets = reflections.get(TypesAnnotated.with(WebServlet.class).asClass()); // 야, 찾아줘 / with 안에 애노테이션 정보 지정
     for (Class<?> servlet : servlets) {
       // 서블릿 클래스의 붙은 WebServlet 애노테이션으로부터 path를 꺼낸다
       String servletPath = servlet.getAnnotation(WebServlet.class).value();
 
       // 생성자의 파라미터의 타입을 알아내 해당 객체를 주입한다.
       Constructor<?> constructor = servlet.getConstructors()[0];
-      Parameter[] params = constructor.getParameters(); // 생성자가 몇개가 있냐?
+      Parameter[] params = constructor.getParameters();
 
       if (params.length == 0) { // 생성자의 파라미터가 없다면, 즉 기본 생성자라면
         objMap.put(servletPath, constructor.newInstance()); 
-        // 생성자 객체에 new Instance()가 있는데 이 생성자의 클래스 정보를 바탕으로 인스턴스를 생성해서 인스턴스 주소를 리턴하는 일을 한다
 
       } else { // 생성자의 파라미터가 있다면, 해당 파라미터 타입과 일치하는 객체를 찾는다.
         Object argument = findObject(objMap, params[0].getType());

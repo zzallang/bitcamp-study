@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import com.bitcamp.board.domain.Member;
+import com.bitcamp.board.servlet.annotaion.Repository;
 
+@Repository("member.dao")
 public class MariaDBMemberDao implements MemberDao{
 
   Connection con;
