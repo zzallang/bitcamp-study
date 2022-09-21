@@ -40,8 +40,6 @@ public class AppInitServlet extends HttpServlet{
   protected void doGet(HttpServletRequest req, HttpServletResponse res)
       throws ServletException, IOException {
 
-    // 콘텐트를 출력하는 출력 스트림을 준비하기 전에 
-    // 어떤 인코딩으로 콘텐트를 출력할 것인지 먼저 설정해야 한다.
     res.setContentType("text/html; charset=UTF-8");
     PrintWriter out = res.getWriter();
 
@@ -52,7 +50,7 @@ public class AppInitServlet extends HttpServlet{
     out.println("<title>bitcamp</title>");
     out.println("</head>");
     out.println("<body>");
-    out.println("<h1>웹 애플리케이션 준비!</h1>");
+    out.println("<h1>웹 애플리케이션 자원 준비!</h1>");
     out.println("</body>");
     out.println("</html>");
   }
