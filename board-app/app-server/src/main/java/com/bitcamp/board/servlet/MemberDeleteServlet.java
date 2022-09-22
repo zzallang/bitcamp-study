@@ -7,10 +7,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.bitcamp.board.dao.MemberDao;
 
 @WebServlet(value="/member/delete")
 public class MemberDeleteServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
+
+  MemberDao memberDao;
+
+  @Override
+  public void init() throws ServletException {
+    memberDao = (MemberDao) this.getServletContext().getAttribute("boardDao"); // ServletConfig가 주입된 이후에 해야함. 위에 ㄴㄴ
+  }
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -32,7 +40,7 @@ public class MemberDeleteServlet extends HttpServlet {
     int no = Integer.parseInt(req.getParameter("no"));
 
     try {
-      if (AppInitServlet.memberDao.delete(no) == 0) {
+      if (memberDao.delete(no) == 0) {
         out.println("<p>해당 번호의 회원 없습니다.</p>");
 
       } else {
