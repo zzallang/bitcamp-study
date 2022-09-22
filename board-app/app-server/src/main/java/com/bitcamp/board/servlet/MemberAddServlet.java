@@ -18,7 +18,7 @@ public class MemberAddServlet extends HttpServlet {
 
   @Override
   public void init() throws ServletException {
-    memberDao = (MemberDao) this.getServletContext().getAttribute("boardDao"); // ServletConfig가 주입된 이후에 해야함. 위에 ㄴㄴ
+    memberDao = (MemberDao) this.getServletContext().getAttribute("memberDao");
   }
 
   @Override
@@ -38,12 +38,12 @@ public class MemberAddServlet extends HttpServlet {
     out.println("<body>");
     out.println("<h1>회원  등록</h1>");
 
-    Member member = new Member();
-    member.name = req.getParameter("name");
-    member.email = req.getParameter("email");
-    member.password = req.getParameter("password");
-
     try {
+      Member member = new Member();
+      member.name = req.getParameter("name");
+      member.email = req.getParameter("email");
+      member.password = req.getParameter("password");
+
       if (memberDao.insert(member) == 0) {
         out.println("<p>회원을 등록할 수 없습니다.</p>");
 

@@ -19,7 +19,7 @@ public class MemberListServlet extends HttpServlet {
 
   @Override
   public void init() throws ServletException {
-    memberDao = (MemberDao) this.getServletContext().getAttribute("boardDao"); // ServletConfig가 주입된 이후에 해야함. 위에 ㄴㄴ
+    memberDao = (MemberDao) this.getServletContext().getAttribute("memberDao"); // ServletConfig가 주입된 이후에 해야함. 위에 ㄴㄴ
   }
 
   @Override
