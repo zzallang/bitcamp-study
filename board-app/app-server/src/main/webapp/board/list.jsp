@@ -7,12 +7,13 @@
 <%@ page import="com.bitcamp.board.domain.Board"%>
 
 <%!
-	BoardDao boardDao;
-	
-	@Override
-	public void init() throws ServletException {
-	  boardDao = (BoardDao) this.getServletContext().getAttribute("boardDao");
-	}
+BoardDao boardDao;
+
+// init(ServletConfig) 메소드에 코드를 넣고 싶으면
+// 다음과 같이 JspPage.jspInit() 메소드를 오버라이딩 하라!
+public void jspinit() {
+  boardDao = (BoardDao) this.getServletContext().getAttribute("boardDao");
+}
 %>
 
 <!DOCTYPE html>
