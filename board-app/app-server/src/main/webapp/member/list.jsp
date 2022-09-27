@@ -29,11 +29,12 @@ tr:hover {
 <% 
   List<Member> members = (List<Member>) request.getAttribute("members");
   for (Member member : members) {
+    pageContext.setAttribute("member",member);
   %>
     <tr>
-    <td><%=member.no%></td>
-    <td><a href='detail?no=<%=member.no%>'><%=member.name%></a></td>
-    <td><%=member.email%></td>
+    <td>${member.no}</td>
+    <td><a href='detail?no=${member.no}'>${member.name}</a></td>
+    <td>${member.email}</td>
     </tr>
 <%
 }
