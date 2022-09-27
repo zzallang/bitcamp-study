@@ -15,4 +15,6 @@ public interface MemberDao {
 
   List<Member> findAll() throws Exception;
 
+  Member findByEmailPassword(String email, String password) throws Exception;
+
 }
