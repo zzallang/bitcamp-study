@@ -4,20 +4,19 @@ import java.sql.Date;
 
 public class Board{
 
-  public int no;
-  public String title;
-  public String content;
-  public int memberNo;
-  public String memberName;
-  public String password;
-  public int viewCount;
-  public Date createdDate;
+  private int no;
+  private String title;
+  private String content;
+  private String password;
+  private int viewCount;
+  private Date createdDate;
+  private Member writer;
 
   @Override
   public String toString() {
-    return "Board [no=" + no + ", title=" + title + ", content=" + content + ", memberNo="
-        + memberNo + ", password=" + password + ", viewCount=" + viewCount + ", createdDate="
-        + createdDate + "]";
+    return "Board [no=" + no + ", title=" + title + ", content=" + content + ", password="
+        + password + ", viewCount=" + viewCount + ", createdDate=" + createdDate + ", writer="
+        + writer + "]";
   }
 
   public int getNo() {
@@ -44,22 +43,6 @@ public class Board{
     this.content = content;
   }
 
-  public int getMemberNo() {
-    return memberNo;
-  }
-
-  public void setMemberNo(int memberNo) {
-    this.memberNo = memberNo;
-  }
-
-  public String getMemberName() {
-    return memberName;
-  }
-
-  public void setMemberName(String memberName) {
-    this.memberName = memberName;
-  }
-
   public String getPassword() {
     return password;
   }
@@ -84,6 +67,13 @@ public class Board{
     this.createdDate = createdDate;
   }
 
+  public Member getWriter() {
+    return writer;
+  }
+
+  public void setWriter(Member writer) {
+    this.writer = writer;
+  }
 
 
 
