@@ -8,6 +8,7 @@ public class Board{
   public String title;
   public String content;
   public int memberNo;
+  public String memberName;
   public String password;
   public int viewCount;
   public Date createdDate;
@@ -51,6 +52,14 @@ public class Board{
     this.memberNo = memberNo;
   }
 
+  public String getMemberName() {
+    return memberName;
+  }
+
+  public void setMemberName(String memberName) {
+    this.memberName = memberName;
+  }
+
   public String getPassword() {
     return password;
   }
@@ -74,6 +83,8 @@ public class Board{
   public void setCreatedDate(Date createdDate) {
     this.createdDate = createdDate;
   }
+
+
 
 
 }

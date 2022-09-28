@@ -30,7 +30,7 @@
       <td>${board.no}</td>
       <td><a href='detail?no=${board.no}'>${board.title}</a></td>
       <td>${board.viewCount}</td>
-      <td>${board.memberNo}</td>
+      <td>${board.memberName}</td>
       <td>${board.createdDate}</td>
     </tr>
 </c:forEach>
