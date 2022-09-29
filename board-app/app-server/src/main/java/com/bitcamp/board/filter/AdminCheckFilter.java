@@ -29,7 +29,7 @@ public class AdminCheckFilter implements Filter {
     HttpServletResponse httpResponse = (HttpServletResponse) response;
 
     Member loginMember = (Member) httpRequest.getSession().getAttribute("loginMember");
-    if (loginMember == null || 
+    if (loginMember == null || // 로그인이 안됐거나
         !loginMember.getEmail().equals("admin@test.com")) {// 관리자가 아니라면
       httpResponse.sendRedirect(httpRequest.getContextPath() + "/");
       return;
