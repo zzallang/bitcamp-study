@@ -22,9 +22,19 @@ public class BoardAddController extends HttpServlet {
   }
 
   @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response)
+  protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
+      /* 
+       URL 디코딩 한 바이트를 UTF-16으로 변환하기 전에
+       해당 바이트의 characterset이 무엇인지 알려줘야 한다.
+       안 알려주면 해당 디코딩 바이크가 ASCII 코드라고 간주한다.
+       UTF-8 코드를 ASCII 코드라고 잘못 판단하니까 UTF-16으로 바꿀 때 오류가 발생한다.
+       물론 영어나 숫자는 ASCII 코드와 UTF-8 코드가 같기 때문에 UTF-16으로 변환하더라도 문제 ㄴㄴ
+       그러나 한글은 UTF-8 코드의 3바이트를 묶어서 UTF-16 2바이트로 변환해야 하기 때문이다.
+       영어라고 간주하고 각각의 1바이트를 2바이트로 변환하니 문제가 발생하는 것이다.
+       */
+      request.setCharacterEncoding("UTF-8");
 
       Board board = new Board();
       board.setTitle(request.getParameter("title"));
@@ -37,48 +47,8 @@ public class BoardAddController extends HttpServlet {
         throw new Exception("게시글 등록 실패!");
       }
 
-      // Refresh:
-      // - 응답 헤더 또는 HTML 문서에 refresh 명령을 삽입할 수 있다.
-      // - 응답 프로토콜
-      //      HTTP/1.1 200
-      //      Content-Type: text/html;charset=UTF-8
-      //      Content-Length: 244
-      //      Date: Mon, 26 Sep 2022 05:24:29 GMT
-      //      Keep-Alive: timeout=20
-      //      Connection: keep-alive
-      //
-      //      <!DOCTYPE html>
-      //      <html>
-      //      <head>
-      //      <meta charset="UTF-8">
-      //      <title>bitcamp</title>
-      //      <meta http-equiv='Refresh' content='1; url=list'> <=== HTML에 refresh 삽입
-      //      </head>
-      //      <body>
-      //      <h1>게시글 입력-JSP</h1>
-      //      <p>게시글을 등록했습니다.</p>
-      //      </body>
-      //      </html>
-      //
-      // 자바 코드:
-      //      response.setHeader("Refresh", "1;url=list"); // 응답 헤더에 refresh를 삽입할 수 있다.
-      response.setContentType("text/html;charset=UTF-8");
-      request.getRequestDispatcher("/board/add.jsp").include(request, response); 
+      response.sendRedirect("list");
 
-      // Redirect:
-      // - 클라이언트에게 콘텐트를 보내지 않는다.
-      // - 응답 프로토콜
-      //      HTTP/1.1 302   <=== 응답 상태 코드
-      //      Location: list  <=== 자동으로 요청할 URL
-      //      Content-Length: 0  <=== 콘텐트는 보내지 않는다.
-      //      Date: Mon, 26 Sep 2022 05:21:22 GMT
-      //      Keep-Alive: timeout=20
-      //      Connection: keep-alive
-      // 
-      //      (콘텐트 없음!)
-      //
-      // 자바 코드:
-      //      response.sendRedirect("list");
     } catch (Exception e) {
       request.setAttribute("exception", e);
       request.getRequestDispatcher("/error.jsp").forward(request, response); 

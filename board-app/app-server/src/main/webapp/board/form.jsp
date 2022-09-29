@@ -9,7 +9,7 @@
 </head>
 <body>
 <h1>게시글 입력-JSP</h1>
-<form action='add'>
+<form action='add' method="post">
 <input name='writerNo' type='hidden' size='5' value="${loginMember.no}" readonly>
 <table border='1'>
   <tr>
