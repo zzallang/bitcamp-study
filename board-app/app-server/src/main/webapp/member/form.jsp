@@ -10,7 +10,7 @@
 <body>
 <h1>회원 입력-JSP</h1>
 
-<form action='add' method="post">
+<form action='add'>
 <table border='1'>
   <tr>
     <th>이름</th><td><input name='name' type='text' size='60'></td>

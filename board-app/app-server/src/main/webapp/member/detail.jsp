@@ -12,7 +12,7 @@
 <%
 Member member = (Member) request.getAttribute("member");
 %>
-<form action='update' method="post">
+<form action='update'>
 <table border='1'>
   <tr>
     <th>번호</th><td><input name='no' type='number' value='${member.no}' readonly></td>
