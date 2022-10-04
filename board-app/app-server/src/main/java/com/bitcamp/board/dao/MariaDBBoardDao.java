@@ -55,19 +55,19 @@ public class MariaDBBoardDao implements BoardDao {
 
   @Override
   public Board findByNo(int no) throws Exception {
-    // try (java.lang.AutoCloseable) 타입의 변수만 가능 {}
     try (PreparedStatement pstmt = con.prepareStatement(
-        "select"
-            + "  b.bno,"
-            + "  b.title,"
-            + "  b.cont,"
-            + "  b.cdt,"
-            + "  b.vw_cnt,"
-            + "  m.mno,"
-            + "  m.name"
+        "select "
+            + "   b.bno,"
+            + "   b.title,"
+            + "   b.cont,"
+            + "   b.cdt,"
+            + "   b.vw_cnt,"
+            + "   m.mno,"
+            + "   m.name"
             + " from app_board b"
-            + "  join app_member m on b.mno = m.mno"
+            + "   join app_member m on b.mno = m.mno" 
             + " where b.bno=" + no);
+
         ResultSet rs = pstmt.executeQuery()) {
 
       if (!rs.next()) {
@@ -87,8 +87,8 @@ public class MariaDBBoardDao implements BoardDao {
 
       board.setWriter(writer);
 
-      // 게시글 첨부파일 가져오기
-      try (PreparedStatement pstmt2 = con.prepareStatement(
+      // 게시글 첨부파일 가져오기 
+      try(PreparedStatement pstmt2 = con.prepareStatement(
           "select bfno, filepath, bno from app_board_file where bno = " + no);
           ResultSet rs2 = pstmt2.executeQuery()) {
 
@@ -100,11 +100,13 @@ public class MariaDBBoardDao implements BoardDao {
           attachedFiles.add(file);
         }
         board.setAttachedFiles(attachedFiles);
+
       }
 
       return board;
     }
   }
+
 
   @Override
   public int update(Board board) throws Exception {
@@ -164,4 +166,34 @@ public class MariaDBBoardDao implements BoardDao {
       return list;
     }
   }
+
+  @Override
+  public AttachedFile findFileByNo(int fileNo) throws Exception {
+    // 게시글 첨부파일 가져오기 
+    try(PreparedStatement pstmt = con.prepareStatement(
+        "select bfno, filepath, bno from app_board_file where bfno = " + fileNo);
+        ResultSet rs = pstmt.executeQuery()) {
+
+      if (!rs.next()) {
+        return null;
+      }
+
+      AttachedFile file = new AttachedFile();
+      file.setNo(rs.getInt("bfno"));
+      file.setFilepath(rs.getString("filepath"));
+      file.setBoardNo(rs.getInt("bno"));
+
+      return file;
+    }
+  }
+
+  @Override
+  public int deleteFile(int fileNo) throws Exception {
+    try (PreparedStatement pstmt = con.prepareStatement("delete from app_board_file where bfno=?")) {
+
+      pstmt.setInt(1, fileNo);
+      return pstmt.executeUpdate();
+    }
+  }
 }
+
