@@ -44,7 +44,7 @@ public class MariaDBBoardDao implements BoardDao {
       // 게시글의 첨부파일을 app_board_file 테이블에 저장한다.
       List<AttachedFile> attachedFiles = board.getAttachedFiles();
       for (AttachedFile attachedFile : attachedFiles) {
-        pstmt2.setString(1, attachedFile.getFilepath());
+        pstmt2.setString(1, attachedFile.getFilepath()); 
         pstmt2.setInt(2, board.getNo());
         pstmt2.executeUpdate();
       }
