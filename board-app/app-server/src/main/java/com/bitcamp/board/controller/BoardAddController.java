@@ -92,6 +92,7 @@ public class BoardAddController extends HttpServlet {
       // Board 객체에서 파일명 목록을 담고 있는 컬렉션 객체를 저장한다.
       board.setAttachedFiles(attachedFiles);
 
+      // Board 객체에 로그인 사용자 정보를 저장
       Member loginMember = (Member) request.getSession().getAttribute("loginMember");
       board.setWriter(loginMember);
 
