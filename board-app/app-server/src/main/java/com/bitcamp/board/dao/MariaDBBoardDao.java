@@ -96,7 +96,6 @@ public class MariaDBBoardDao implements BoardDao {
     }
   }
 
-
   @Override
   public int update(Board board) throws Exception {
     try (PreparedStatement pstmt = con.prepareStatement(
@@ -110,13 +109,9 @@ public class MariaDBBoardDao implements BoardDao {
     }
   }
 
-
   @Override
   public int delete(int no) throws Exception {
     try (PreparedStatement pstmt = con.prepareStatement("delete from app_board where bno=?")) {
-
-      // 게시글의 첨부파일을 먼저 삭제한다.
-      deleteFiles(no);
 
       pstmt.setInt(1, no);
       return pstmt.executeUpdate();
