@@ -38,8 +38,6 @@ public class MariaDBBoardDao implements BoardDao {
         board.setNo(rs.getInt(1));
       }
 
-      insertFiles(board);
-
       return count;
     }
   }
