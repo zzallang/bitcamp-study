@@ -10,9 +10,9 @@ public interface MemberService {
 
   boolean update(Member member) throws Exception;
 
-  Member get(String email, String password) throws Exception;
-
   Member get(int no) throws Exception;
+
+  Member get(String email, String password) throws Exception;
 
   boolean delete(int no) throws Exception;
 
