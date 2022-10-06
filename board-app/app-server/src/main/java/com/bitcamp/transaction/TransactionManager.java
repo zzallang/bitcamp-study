@@ -10,7 +10,7 @@ public class TransactionManager {
     this.ds = ds;
   }
 
-  public TransactionStatus getTransactionStatus() throws Exception {
+  public TransactionStatus getTransaction() throws Exception {
     // 현재 스레드에서 사용할 DB 커넥션 객체를 꺼낸다.
     Connection con = ds.getConnection();
 
