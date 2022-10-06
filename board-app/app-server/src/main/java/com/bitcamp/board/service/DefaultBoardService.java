@@ -1,16 +1,18 @@
 package com.bitcamp.board.service;
 
+import java.sql.Connection;
 import java.util.List;
 import com.bitcamp.board.dao.BoardDao;
 import com.bitcamp.board.domain.AttachedFile;
 import com.bitcamp.board.domain.Board;
 
 public class DefaultBoardService implements BoardService{
-
+  Connection con; // 트랜잭션을 다룰 때 사용할 객체
   BoardDao boardDao;
 
-  public DefaultBoardService(BoardDao boardDao) {
+  public DefaultBoardService(BoardDao boardDao, Connection con) {
     this.boardDao = boardDao;
+    this.con = con;
   }
 
   @Override

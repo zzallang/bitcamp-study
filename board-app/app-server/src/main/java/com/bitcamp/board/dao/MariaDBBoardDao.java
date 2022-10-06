@@ -21,10 +21,9 @@ public class MariaDBBoardDao implements BoardDao {
 
   @Override
   public int insert(Board board) throws Exception {
-    try (
-        PreparedStatement pstmt = con.prepareStatement(
-            "insert into app_board(title,cont,mno) values(?,?,?)",
-            Statement.RETURN_GENERATED_KEYS)) {
+    try (PreparedStatement pstmt = con.prepareStatement(
+        "insert into app_board(title,cont,mno) values(?,?,?)",
+        Statement.RETURN_GENERATED_KEYS)) {
 
       // 게시글 제목과 내용을 app_board 테이블에 저장한다.
       pstmt.setString(1, board.getTitle());
