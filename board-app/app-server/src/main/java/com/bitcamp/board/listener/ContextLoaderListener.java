@@ -1,7 +1,5 @@
 package com.bitcamp.board.listener;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -12,6 +10,7 @@ import com.bitcamp.board.dao.MariaDBMemberDao;
 import com.bitcamp.board.dao.MemberDao;
 import com.bitcamp.board.service.DefaultBoardService;
 import com.bitcamp.board.service.DefaultMemberService;
+import com.bitcamp.sql.DataSource;
 
 //  웹 애플리케이션이 시작되었을 때 공유할 자원을 준비시키거나 해제하는 일을 한다.
 //
@@ -22,13 +21,15 @@ public class ContextLoaderListener implements ServletContextListener{
   public void contextInitialized(ServletContextEvent sce) {
     System.out.println("공유 자원을 준비 중!!");
     try {
-      Class.forName("org.mariadb.jdbc.Driver");
-      Connection con = DriverManager.getConnection(
-          "jdbc:mariadb://localhost:3306/studydb","study","1111");
       ServletContext ctx = sce.getServletContext();
 
-      BoardDao boardDao = new MariaDBBoardDao(con);
-      MemberDao memberDao = new MariaDBMemberDao(con);
+      DataSource ds = new DataSource(
+          "org.mariadb.jdbc.Driver",
+          "jdbc:mariadb://localhost:3306/studydb",
+          "study",
+          "1111");
+      BoardDao boardDao = new MariaDBBoardDao(ds);
+      MemberDao memberDao = new MariaDBMemberDao(ds);
 
       ctx.setAttribute("boardService", new DefaultBoardService(boardDao, con));
       ctx.setAttribute("memberService", new DefaultMemberService(memberDao));
