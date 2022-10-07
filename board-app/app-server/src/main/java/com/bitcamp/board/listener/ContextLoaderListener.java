@@ -37,6 +37,7 @@ public class ContextLoaderListener implements ServletContextListener{
 
       ctx.setAttribute("boardService", new DefaultBoardService(boardDao, txManager));
       ctx.setAttribute("memberService", new DefaultMemberService(memberDao));
+
     } catch (Exception e) {
       e.printStackTrace();
     }
