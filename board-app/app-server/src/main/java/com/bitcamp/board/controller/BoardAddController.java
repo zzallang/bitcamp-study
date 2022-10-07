@@ -44,8 +44,10 @@ public class BoardAddController extends HttpServlet {
       List<AttachedFile> attachedFiles = new ArrayList<>();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
       String dirPath = this.getServletContext().getRealPath("/board/files");
       Collection<Part> parts = request.getParts();
+
       for (Part part : parts) {
         if (!part.getName().equals("files") || part.getSize() == 0) continue;
+
         String filename = UUID.randomUUID().toString();
         part.write(dirPath + "/" + filename);
         attachedFiles.add(new AttachedFile(filename));
@@ -57,12 +59,10 @@ public class BoardAddController extends HttpServlet {
 
       // 서비스 객체에 업무를 맡긴다.
       boardService.add(board);
-
-      response.sendRedirect("list");
+      request.setAttribute("viewName", "redirect:list");
 
     } catch (Exception e) {
       request.setAttribute("exception", e);
-      request.getRequestDispatcher("/error.jsp").forward(request, response); 
     }
   }
 }

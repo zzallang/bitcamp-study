@@ -55,6 +55,7 @@ public class BoardUpdateController extends HttpServlet {
 
       // 게시글 작성자인지 검사한다.
       Member loginMember = (Member) request.getSession().getAttribute("loginMember");
+
       if (boardService.get(board.getNo()).getWriter().getNo() != loginMember.getNo()) {
         throw new Exception("게시글 작성자가 아닙니다.");
       }
@@ -63,11 +64,10 @@ public class BoardUpdateController extends HttpServlet {
         throw new Exception("게시글을 변경할 수 없습니다!");
       }
 
-      response.sendRedirect("list");
+      request.setAttribute("viewName", "redirect:list");
 
     } catch (Exception e) {
       request.setAttribute("exception", e);
-      request.getRequestDispatcher("/error.jsp").forward(request, response); 
     }
   }
 }

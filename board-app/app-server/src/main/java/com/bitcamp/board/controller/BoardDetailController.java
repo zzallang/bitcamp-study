@@ -32,16 +32,12 @@ public class BoardDetailController extends HttpServlet {
       if (board == null) {
         throw new Exception("해당 번호의 게시글이 없습니다.");
       }
-      // JSP가 사용할 수 있도록 ServletRequest 보관소에 저장한다.
-      request.setAttribute("board", board);
 
-      // JSP를 UI생성을 위임한다.
-      response.setContentType("text/html; charset=UTF-8"); 
-      request.getRequestDispatcher("/board/detail.jsp").include(request, response);
+      request.setAttribute("board", board);
+      request.setAttribute("viewName","/board/detail.jsp");
 
     } catch (Exception e) {
       request.setAttribute("exception", e);
-      request.getRequestDispatcher("/error.jsp").forward(request, response);
 
     }
   }

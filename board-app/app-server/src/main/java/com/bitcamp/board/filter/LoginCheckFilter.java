@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.bitcamp.board.domain.Member;
 
-@WebFilter("*")
+@WebFilter("/service/*")
 public class LoginCheckFilter implements Filter {
 
   @Override
@@ -40,8 +40,12 @@ public class LoginCheckFilter implements Filter {
     // 요청 URL에서 서블릿 경로만 추출한다.
     // 예) 요청 URL   : http://localhost:8888/app/board/add?title=aaa&content=bbb
     //     서블릿 경로: /board/add <== 웹 애플리케이션 경로는 뺀다.
-    String servletPath = httpRequest.getServletPath();
+    //    String servletPath = httpRequest.getServletPath();
     //    System.out.println(servletPath);
+
+    // URL 매핑이 "/service/*" 형식으로 되어 있을 때
+    // * 경로를 알아내려면 다음에 메소드를 호출해야 한다.
+    String servletPath = httpRequest.getPathInfo();
 
     // 콘텐트를 등록,변경,삭제하는 경우 로그인 여부를 검사한다.
     if (servletPath.endsWith("add") ||
@@ -50,7 +54,7 @@ public class LoginCheckFilter implements Filter {
 
       Member loginMember = (Member) httpRequest.getSession().getAttribute("loginMember");
       if (loginMember == null) {// 로그인하지 않았다면
-        httpResponse.sendRedirect(httpRequest.getContextPath() + "/auth/form.jsp");
+        httpResponse.sendRedirect(httpRequest.getContextPath() + "/service/auth/form.jsp");
         return;
       }
     }

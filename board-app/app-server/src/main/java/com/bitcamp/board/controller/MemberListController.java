@@ -27,13 +27,11 @@ public class MemberListController extends HttpServlet{
     try {
       List <Member> members = memberService.list();
 
-      request.setAttribute("members", members);
-      response.setContentType("text/html;charset=UTF-8"); 
-      request.getRequestDispatcher("/member/list.jsp").include(request, response); 
+      request.setAttribute("members", memberService.list());
+      request.setAttribute("viewName", "/member/list.jsp"); 
 
     } catch (Exception e) {
       request.setAttribute("exception", e);
-      request.getRequestDispatcher("/error.jsp").forward(request, response); // JSP를 실행한 후 리턴된다.
     }
   }
 }
