@@ -1,45 +1,34 @@
 package com.bitcamp.board.controller;
 
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.bitcamp.board.domain.Member;
 import com.bitcamp.board.service.MemberService;
+import com.bitcamp.servlet.Controller;
 
-@WebServlet("/member/update")
-public class MemberUpdateController extends HttpServlet {
-  private static final long serialVersionUID = 1L;
+public class MemberUpdateController implements Controller{
 
   MemberService memberService;
 
-  @Override
-  public void init() {
-    memberService = (MemberService) this.getServletContext().getAttribute("memberService");
+  public MemberUpdateController(MemberService memberService) {
+    this.memberService = memberService;
   }
 
   @Override
-  protected void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    try {
-      request.setCharacterEncoding("UTF-8");
+  public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-      Member member = new Member();
-      member.setNo(Integer.parseInt(request.getParameter("no")));
-      member.setName(request.getParameter("name"));
-      member.setEmail(request.getParameter("email"));
-      member.setPassword(request.getParameter("password"));
+    request.setCharacterEncoding("UTF-8");
 
-      if (!memberService.update(member)) {
-        throw new Exception("회원 변경에 실패했습니다.");
-      }      
+    Member member = new Member();
+    member.setNo(Integer.parseInt(request.getParameter("no")));
+    member.setName(request.getParameter("name"));
+    member.setEmail(request.getParameter("email"));
+    member.setPassword(request.getParameter("password"));
 
-      request.setAttribute("viewName", "redirect:list");
+    if (!memberService.update(member)) {
+      throw new Exception("회원 변경에 실패했습니다.");
+    }      
 
-    } catch (Exception e) {
-      request.setAttribute("exception", e); 
-    }
+    return "redirect:list";
   }
 }

@@ -7,7 +7,22 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration.Dynamic;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebListener;
+import com.bitcamp.board.controller.BoardAddController;
+import com.bitcamp.board.controller.BoardDeleteController;
+import com.bitcamp.board.controller.BoardDetailController;
+import com.bitcamp.board.controller.BoardFileDeleteController;
+import com.bitcamp.board.controller.BoardFormController;
 import com.bitcamp.board.controller.BoardListController;
+import com.bitcamp.board.controller.BoardUpdateController;
+import com.bitcamp.board.controller.LoginController;
+import com.bitcamp.board.controller.LoginFormController;
+import com.bitcamp.board.controller.LogoutController;
+import com.bitcamp.board.controller.MemberAddController;
+import com.bitcamp.board.controller.MemberDeleteController;
+import com.bitcamp.board.controller.MemberDetailController;
+import com.bitcamp.board.controller.MemberFormController;
+import com.bitcamp.board.controller.MemberListController;
+import com.bitcamp.board.controller.MemberUpdateController;
 import com.bitcamp.board.dao.BoardDao;
 import com.bitcamp.board.dao.MariaDBBoardDao;
 import com.bitcamp.board.dao.MariaDBMemberDao;
@@ -47,7 +62,23 @@ public class ContextLoaderListener implements ServletContextListener{
       MemberService memberService = new DefaultMemberService(memberDao);
 
       ctx.setAttribute("/board/list", new BoardListController(boardService));
+      ctx.setAttribute("/board/detail", new BoardDetailController(boardService));
+      ctx.setAttribute("/board/form", new BoardFormController());
+      ctx.setAttribute("/board/add", new BoardAddController(boardService));
+      ctx.setAttribute("/board/fileDelete", new BoardFileDeleteController(boardService));
+      ctx.setAttribute("/board/update", new BoardUpdateController(boardService));
+      ctx.setAttribute("/board/delete", new BoardDeleteController(boardService));
 
+      ctx.setAttribute("/auth/form", new LoginFormController());
+      ctx.setAttribute("/auth/login", new LoginController(memberService));
+      ctx.setAttribute("/auth/logout", new LogoutController());
+
+      ctx.setAttribute("/member/list", new MemberListController(memberService));
+      ctx.setAttribute("/member/detail", new MemberDetailController(memberService));
+      ctx.setAttribute("/member/form", new MemberFormController());
+      ctx.setAttribute("/member/add", new MemberAddController(memberService));
+      ctx.setAttribute("/member/update", new MemberUpdateController(memberService));
+      ctx.setAttribute("/member/delete", new MemberDeleteController(memberService));
 
 
       // 자바 코드로 서블릿 객체를 직접 생성하여 서버에 등록하기.
