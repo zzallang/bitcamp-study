@@ -1,6 +1,7 @@
 package com.bitcamp.servlet;
 
 import java.io.IOException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,14 @@ public class DispatcherServlet extends HttpServlet {
   @Override
   protected void service(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    System.out.println("DispatcherServlet 실행!");
+
+    // 프론트 컨트롤러를 경유해서 실행할 페이지 컨드롤러의 경로를 알아낸다.
+    // "/service" 다음에 오는 경로, 즉 * 에 해당하는 경로를 리턴한다.
+    String pathInfo = req.getPathInfo();
+
+    // 페이지 컨트롤러로 실행을 위임한다.
+    resp.setContentType("text/html;charset=UTF-8");
+    RequestDispatcher 요청배달자 = req.getRequestDispatcher(pathInfo);
+    요청배달자.include(req, resp);
   }
 }

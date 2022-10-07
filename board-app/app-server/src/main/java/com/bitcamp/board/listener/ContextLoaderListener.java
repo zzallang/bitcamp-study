@@ -45,7 +45,6 @@ public class ContextLoaderListener implements ServletContextListener{
       Dynamic config = ctx.addServlet("DispatcherServlet", servlet);
       config.addMapping("/service/*");
 
-
     } catch (Exception e) {
       e.printStackTrace();
     }
