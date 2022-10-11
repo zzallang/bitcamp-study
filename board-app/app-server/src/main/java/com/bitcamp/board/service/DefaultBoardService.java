@@ -48,7 +48,14 @@ public class DefaultBoardService implements BoardService{
 
   @Override
   public boolean update(Board board) throws Exception {
-    TransactionStatus status = txManager.getTransaction();
+    // 스프링에서 제공하는 트랜잭션을 사용할 때는
+    // 트랜잭션 실행 정책을 정의해야 한다.
+    DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+    // explicitly setting the transaction name is something that can be done only programmatically
+    def.setName("tx1");
+    def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+
+    TransactionStatus status = txManager.getTransaction(def);
     try {
       // 1) 게시글 변경
       if (boardDao.update(board) == 0) {
