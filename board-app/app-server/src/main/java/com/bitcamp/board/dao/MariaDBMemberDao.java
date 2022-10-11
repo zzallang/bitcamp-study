@@ -1,20 +1,20 @@
 package com.bitcamp.board.dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
+import org.springframework.stereotype.Component;
 import com.bitcamp.board.domain.Member;
 
-public class MariaDBMemberDao implements MemberDao{
+@Component
+public class MariaDBMemberDao implements MemberDao {
 
   DataSource ds;
 
-  //  DAO가 사용할 의존 객체 Connection을 생성자의 파라미터로 받는다.
   public MariaDBMemberDao(DataSource ds) {
+    System.out.println("MariaDBMemberDao() 호출됨!");
     this.ds = ds;
   }
 
@@ -22,16 +22,17 @@ public class MariaDBMemberDao implements MemberDao{
   public int insert(Member member) throws Exception {
     try (PreparedStatement pstmt = ds.getConnection().prepareStatement(
         "insert into app_member(name,email,pwd) values(?,?,sha2(?,256))")) {
+
       pstmt.setString(1, member.getName());
       pstmt.setString(2, member.getEmail());
       pstmt.setString(3, member.getPassword());
+
       return pstmt.executeUpdate();
     }
   }
 
   @Override
   public Member findByNo(int no) throws Exception {
-    // try (java.lang.AutoCloseable) 타입의 변수만 가능 {}
 
     try (PreparedStatement pstmt = ds.getConnection().prepareStatement(
         "select mno,name,email,cdt from app_member where mno=" + no);
@@ -64,24 +65,19 @@ public class MariaDBMemberDao implements MemberDao{
     }
   }
 
-
   @Override
   public int delete(int no) throws Exception {
-    try (Connection con = DriverManager.getConnection(
-        "jdbc:mariadb://localhost:3306/studydb","study","1111");
-        PreparedStatement pstmt1 = ds.getConnection().prepareStatement(
-            "delete from app_board where mno=?");
-        PreparedStatement pstmt2 = ds.getConnection().prepareStatement(
-            " delete from app_member where mno=?")) {
+    try (PreparedStatement pstmt1 = ds.getConnection().prepareStatement("delete from app_board where mno=?");
+        PreparedStatement pstmt2 = ds.getConnection().prepareStatement("delete from app_member where mno=?")) {
 
-      // Connection 객체를 수동 커밋 상태로 설정한다.
+      // 커넥션 객체를 수동 커밋 상태로 설정한다.
       ds.getConnection().setAutoCommit(false);
 
       // 회원이 작성한 게시글을 삭제한다.
       pstmt1.setInt(1, no);
       pstmt1.executeUpdate();
 
-      // 회원을 삭제한다
+      // 회원을 삭제한다.
       pstmt2.setInt(1, no);
       int count = pstmt2.executeUpdate();
 
@@ -92,14 +88,14 @@ public class MariaDBMemberDao implements MemberDao{
 
     } catch (Exception e) {
       // 예외가 발생하면 마지막 커밋 상태로 돌린다.
-      // => 임시 데이터벵스에 보관된 이전 작업 결과를 모두 취소한다.
+      // => 임시 데이터베이스에 보관된 이전 작업 결과를 모두 취소한다.
       ds.getConnection().rollback();
 
       // 예외 발생 사실을 호출자에게 전달한다.
       throw e;
 
     } finally {
-      // 삭제 작업 후 auto commit 상태로 전환한다.
+      // 삭제 작업 후 자동 커밋 상태로 전환한다.
       ds.getConnection().setAutoCommit(true);
     }
   }
@@ -128,8 +124,7 @@ public class MariaDBMemberDao implements MemberDao{
   @Override
   public Member findByEmailPassword(String email, String password) throws Exception {
     try (PreparedStatement pstmt = ds.getConnection().prepareStatement(
-        "select mno,name,email,cdt from app_member where email=? and pwd=sha2(?,256)");
-        ) {
+        "select mno,name,email,cdt from app_member where email=? and pwd=sha2(?,256)")) {
 
       pstmt.setString(1, email);
       pstmt.setString(2, password);
@@ -149,3 +144,17 @@ public class MariaDBMemberDao implements MemberDao{
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
