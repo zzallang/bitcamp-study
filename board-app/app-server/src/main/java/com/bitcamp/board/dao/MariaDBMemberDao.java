@@ -6,8 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import javax.sql.DataSource;
 import com.bitcamp.board.domain.Member;
-import com.bitcamp.sql.DataSource;
 
 public class MariaDBMemberDao implements MemberDao{
 
