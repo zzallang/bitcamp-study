@@ -11,9 +11,11 @@ import com.bitcamp.board.domain.AttachedFile;
 import com.bitcamp.board.domain.Board;
 
 @Component
-// - 이 애노테이션을 붙이면 Spring IoC 컨테이너가 객체를 자동으로 생성할 것이다.
-// - 생성자에 파라미터가 있다면 해당 타입의 객체를 찾아 생성자를 호출할 때 주입할 것이다.
-// - 만약 생성자가 원하는 파라미터 값이 없다면 생성 예외가 발생한다.
+//- 이 애노테이션을 붙이면 Spring IoC 컨테이너가 객체를 자동 생성한다.
+//- 객체의 이름을 명시하지 않으면 
+//- 클래스 이름(첫 알파벳 소문자 ex: "defaultBoardService")을 사용하여 저장한다.
+//- 물론 생성자의 파라미터 값을 자동으로 주입한다.
+//- 파라미터에 해당하는 객체가 없다면 생성 오류가 발생한다.
 public class DefaultBoardService implements BoardService {
 
   PlatformTransactionManager txManager; 

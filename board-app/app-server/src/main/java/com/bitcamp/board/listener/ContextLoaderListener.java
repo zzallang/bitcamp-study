@@ -20,11 +20,12 @@ public class ContextLoaderListener implements ServletContextListener {
   public void contextInitialized(ServletContextEvent sce) {
     System.out.println("공유 자원을 준비 중!!");
 
-    // 스프링 IoC 컨테이너 준비
-    AnnotationConfigApplicationContext iocContainer = 
-        new AnnotationConfigApplicationContext(AppConfig.class);
-
     try {
+
+      // 스프링 IoC 컨테이너 준비
+      AnnotationConfigApplicationContext iocContainer = 
+          new AnnotationConfigApplicationContext(AppConfig.class);
+
       ServletContext ctx = sce.getServletContext();
 
 
