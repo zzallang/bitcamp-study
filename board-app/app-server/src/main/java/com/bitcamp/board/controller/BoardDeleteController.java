@@ -2,15 +2,13 @@ package com.bitcamp.board.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import com.bitcamp.board.domain.Member;
 import com.bitcamp.board.service.BoardService;
-import com.bitcamp.servlet.Controller;
 
-@Component("/board/delete")
-//- 애노테이션을 붙일 때 객체 이름을 명ㅎ시하면 그 이름으로 저장한다.
-//- 프론트 컨트롤러는 페이지 컨트롤러를 찾을 때 이 이름으로 찾을 것이다.
-public class BoardDeleteController implements Controller {
+@Controller // 페이지 컨트롤러에 붙이는 애노테이션
+public class BoardDeleteController {
 
   BoardService boardService;
 
@@ -18,7 +16,7 @@ public class BoardDeleteController implements Controller {
     this.boardService = boardService;
   }
 
-  @Override
+  @GetMapping("/board/delete") // 요청이 들어 왔을 때 호출될 메소드에 붙이는 애노테이션
   public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
     int no = Integer.parseInt(request.getParameter("no"));
 
