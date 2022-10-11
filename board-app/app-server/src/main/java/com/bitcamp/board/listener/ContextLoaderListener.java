@@ -21,16 +21,14 @@ public class ContextLoaderListener implements ServletContextListener {
     System.out.println("공유 자원을 준비 중!!");
 
     try {
-
       // 스프링 IoC 컨테이너 준비
       AnnotationConfigApplicationContext iocContainer = 
           new AnnotationConfigApplicationContext(AppConfig.class);
 
       ServletContext ctx = sce.getServletContext();
 
-
       // 자바 코드로 서블릿 객체를 직접 생성하여 서버에 등록하기
-      DispatcherServlet servlet = new DispatcherServlet();
+      DispatcherServlet servlet = new DispatcherServlet(iocContainer);
       Dynamic config = ctx.addServlet("DispatcherServlet", servlet);
       config.addMapping("/service/*");
       config.setMultipartConfig(new MultipartConfigElement(
