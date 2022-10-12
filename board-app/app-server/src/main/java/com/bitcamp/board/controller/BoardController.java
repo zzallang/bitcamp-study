@@ -1,9 +1,11 @@
 package com.bitcamp.board.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
@@ -37,7 +39,15 @@ public class BoardController {
     Board board = new Board();
     board.setTitle(request.getParameter("title"));
     board.setContent(request.getParameter("content"));
+    board.setAttachedFiles(saveAttachedFiles(request));
+    board.setWriter((Member) request.getSession().getAttribute("loginMember"));
 
+    boardService.add(board);
+    return "redirect:list";
+  }
+
+  private List<AttachedFile> saveAttachedFiles(HttpServletRequest request)
+      throws IOException, ServletException {
     List<AttachedFile> attachedFiles = new ArrayList<>();
     String dirPath = request.getServletContext().getRealPath("/board/files");
     Collection<Part> parts = request.getParts();
@@ -49,13 +59,7 @@ public class BoardController {
       part.write(dirPath + "/" + filename);
       attachedFiles.add(new AttachedFile(filename));
     }
-    board.setAttachedFiles(attachedFiles);
-
-    Member loginMember = (Member) request.getSession().getAttribute("loginMember");
-    board.setWriter(loginMember);
-
-    boardService.add(board);
-    return "redirect:list";
+    return attachedFiles;
   }
 
   @GetMapping("/board/list")
@@ -85,21 +89,10 @@ public class BoardController {
     board.setNo(Integer.parseInt(request.getParameter("no")));
     board.setTitle(request.getParameter("title"));
     board.setContent(request.getParameter("content"));
-
-    List<AttachedFile> attachedFiles = new ArrayList<>();
-    String dirPath = request.getServletContext().getRealPath("/board/files");
-    Collection<Part> parts = request.getParts();
-    for (Part part : parts) {
-      if (!part.getName().equals("files") || part.getSize() == 0) continue;
-      String filename = UUID.randomUUID().toString();
-      part.write(dirPath + "/" + filename);
-      attachedFiles.add(new AttachedFile(filename));
-    }
-    board.setAttachedFiles(attachedFiles);
+    board.setAttachedFiles(saveAttachedFiles(request));
 
     // 게시글 작성자인지 검사한다.
     Member loginMember = (Member) request.getSession().getAttribute("loginMember");
-
     if (boardService.get(board.getNo()).getWriter().getNo() != loginMember.getNo()) {
       throw new Exception("게시글 작성자가 아닙니다.");
     }
