@@ -35,7 +35,6 @@ public class BoardController {
 
   @PostMapping("/board/add")
   public String add(HttpServletRequest request, HttpServletResponse response) throws Exception {
-    request.setCharacterEncoding("UTF-8");
 
     Board board = new Board();
     board.setTitle(request.getParameter("title"));
@@ -84,8 +83,6 @@ public class BoardController {
 
   @PostMapping("/board/update")
   public String update(HttpServletRequest request, HttpServletResponse response) throws Exception {
-    request.setCharacterEncoding("UTF-8");
-
     Board board = new Board();
     board.setNo(Integer.parseInt(request.getParameter("no")));
     board.setTitle(request.getParameter("title"));
@@ -123,12 +120,10 @@ public class BoardController {
 
   @GetMapping("/board/fileDelete")
   public String fileDelete(HttpServletRequest request, HttpServletResponse response) throws Exception {
-    int no = Integer.parseInt(request.getParameter("no")); // 여기서 받는 번호는 삭제할 첨부파일 번호 
+    int no = Integer.parseInt(request.getParameter("no")); 
 
-    // 첨부파일 정보를 가져온다.
     AttachedFile attachedFile = boardService.getAttachedFile(no);
 
-    // 게시글의 작성자가 로그인 사용자인지 검사한다.
     Member loginMember = (Member) request.getSession().getAttribute("loginMember");
     Board board = boardService.get(attachedFile.getBoardNo());
 

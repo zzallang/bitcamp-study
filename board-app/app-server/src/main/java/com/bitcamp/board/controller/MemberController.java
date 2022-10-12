@@ -24,7 +24,6 @@ public class MemberController {
 
   @PostMapping("/member/add")
   public String add(HttpServletRequest request, HttpServletResponse response) throws Exception {
-    request.setCharacterEncoding("UTF-8");
 
     Member member = new Member();
     member.setName(request.getParameter("name"));
@@ -49,7 +48,7 @@ public class MemberController {
 
     if (member == null) {
       throw new Exception("해당 번호의 회원이 없습니다.");
-    }      
+    }
 
     request.setAttribute("member", member);
     return "/member/detail.jsp";
@@ -57,9 +56,6 @@ public class MemberController {
 
   @PostMapping("/member/update")
   public String update(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-    request.setCharacterEncoding("UTF-8");
-
     Member member = new Member();
     member.setNo(Integer.parseInt(request.getParameter("no")));
     member.setName(request.getParameter("name"));
