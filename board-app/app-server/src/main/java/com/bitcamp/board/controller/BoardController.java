@@ -8,6 +8,7 @@ import java.util.UUID;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -91,11 +92,7 @@ public class BoardController {
     board.setContent(request.getParameter("content"));
     board.setAttachedFiles(saveAttachedFiles(request));
 
-    // 게시글 작성자인지 검사한다.
-    Member loginMember = (Member) request.getSession().getAttribute("loginMember");
-    if (boardService.get(board.getNo()).getWriter().getNo() != loginMember.getNo()) {
-      throw new Exception("게시글 작성자가 아닙니다.");
-    }
+    checkOwner(board.getNo(), request.getSession());
 
     if (!boardService.update(board)) {
       throw new Exception("게시글을 변경할 수 없습니다!");
@@ -104,14 +101,18 @@ public class BoardController {
     return "redirect:list";
   }
 
+  private void checkOwner(int boardNo, HttpSession session) throws Exception {
+    Member loginMember = (Member) session.getAttribute("loginMember");
+    if (boardService.get(boardNo).getWriter().getNo() != loginMember.getNo()) {
+      throw new Exception("게시글 작성자가 아닙니다.");
+    }
+  }
+
   @GetMapping("/board/delete")
   public String delete(HttpServletRequest request, HttpServletResponse response) throws Exception {
     int no = Integer.parseInt(request.getParameter("no"));
 
-    Member loginMember = (Member) request.getSession().getAttribute("loginMember");
-    if (boardService.get(no).getWriter().getNo() != loginMember.getNo()) {
-      throw new Exception("게시글 작성자가 아닙니다.");
-    }
+    checkOwner(no, request.getSession());
 
     if(!boardService.delete(no)) {
       throw new Exception("게시글을 삭제할 수 없습니다.");
