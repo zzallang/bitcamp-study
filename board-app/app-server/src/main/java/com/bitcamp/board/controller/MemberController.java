@@ -20,8 +20,7 @@ public class MemberController {
   }
 
   @GetMapping("form")
-  public String form() throws Exception {
-    return "/member/form.jsp";
+  public void form() throws Exception {
   }
 
   @PostMapping("add")
@@ -31,16 +30,15 @@ public class MemberController {
   }
 
   @GetMapping("list")
-  public String list(Model model) throws Exception {
+  public void list(Model model) throws Exception {
     // 프론트 컨트롤러가 건네 준 Model 객체에 작업 결과를 담아 두면
     // 핸들러 호출이 끝났을 때 JSP를 실행하기 전에 
     // 먼저 Model 객체에 담아둔 값을 ServletRequest 보관소로 옮긴다.
     model.addAttribute("members", memberService.list());
-    return "/member/list.jsp";
   }
 
   @GetMapping("detail")
-  public String detail(int no, Map map) throws Exception {
+  public void detail(int no, Map map) throws Exception {
 
     Member member = memberService.get(no);
 
@@ -49,7 +47,6 @@ public class MemberController {
     }
 
     map.put("member", member);
-    return "/member/detail.jsp";
   }
 
   @PostMapping("update")
