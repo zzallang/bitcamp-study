@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import com.bitcamp.board.domain.AttachedFile;
 import com.bitcamp.board.domain.Board;
 import com.bitcamp.board.domain.Member;
@@ -37,8 +36,8 @@ public class BoardController {
 
   @PostMapping("add")
   public String add(
-      @RequestParam("title") String title, 
-      @RequestParam("content") String content, 
+      String title, 
+      String content, 
       HttpServletRequest request,
       HttpSession session) throws Exception {
     Board board = new Board();
@@ -75,7 +74,7 @@ public class BoardController {
 
   @GetMapping("detail")
   public String detail(
-      @RequestParam("no") int no, 
+      int no, 
       HttpServletRequest request) throws Exception {
     Board board = boardService.get(no);
     if (board == null) {
@@ -88,9 +87,9 @@ public class BoardController {
 
   @PostMapping("update")
   public String update(
-      @RequestParam("no") int no,
-      @RequestParam("title") String title,
-      @RequestParam("content") String content,
+      int no,
+      String title,
+      String content,
       HttpServletRequest request,
       HttpSession session) throws Exception {
     Board board = new Board();
@@ -117,7 +116,7 @@ public class BoardController {
 
   @GetMapping("delete")
   public String delete(
-      @RequestParam("no") int no,
+      int no,
       HttpSession session) throws Exception {
 
     checkOwner(no,session);
@@ -130,7 +129,7 @@ public class BoardController {
 
   @GetMapping("fileDelete")
   public String fileDelete(
-      @RequestParam("no") int no,
+      int no,
       HttpSession session) throws Exception {
 
     AttachedFile attachedFile = boardService.getAttachedFile(no);
