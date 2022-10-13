@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import com.bitcamp.board.domain.AttachedFile;
 import com.bitcamp.board.domain.Board;
 import com.bitcamp.board.domain.Member;
@@ -35,13 +36,16 @@ public class BoardController {
   }
 
   @PostMapping("add")
-  public String add(HttpServletRequest request) throws Exception {
-
+  public String add(
+      @RequestParam("title") String title, 
+      @RequestParam("content") String content, 
+      HttpServletRequest request,
+      HttpSession session) throws Exception {
     Board board = new Board();
-    board.setTitle(request.getParameter("title"));
-    board.setContent(request.getParameter("content"));
+    board.setTitle(title);
+    board.setContent(content);
     board.setAttachedFiles(saveAttachedFiles(request));
-    board.setWriter((Member) request.getSession().getAttribute("loginMember"));
+    board.setWriter((Member) session.getAttribute("loginMember"));
 
     boardService.add(board);
     return "redirect:list";
@@ -70,10 +74,10 @@ public class BoardController {
   }
 
   @GetMapping("detail")
-  public String detail(HttpServletRequest request) throws Exception {
-    int boardNo = Integer.parseInt(request.getParameter("no"));
-
-    Board board = boardService.get(boardNo);
+  public String detail(
+      @RequestParam("no") int no, 
+      HttpServletRequest request) throws Exception {
+    Board board = boardService.get(no);
     if (board == null) {
       throw new Exception("해당 번호의 게시글이 없습니다.");
     }
@@ -83,14 +87,19 @@ public class BoardController {
   }
 
   @PostMapping("update")
-  public String update(HttpServletRequest request) throws Exception {
+  public String update(
+      @RequestParam("no") int no,
+      @RequestParam("title") String title,
+      @RequestParam("content") String content,
+      HttpServletRequest request,
+      HttpSession session) throws Exception {
     Board board = new Board();
-    board.setNo(Integer.parseInt(request.getParameter("no")));
-    board.setTitle(request.getParameter("title"));
-    board.setContent(request.getParameter("content"));
+    board.setNo(no);
+    board.setTitle(title);
+    board.setContent(content);
     board.setAttachedFiles(saveAttachedFiles(request));
 
-    checkOwner(board.getNo(), request.getSession());
+    checkOwner(board.getNo(), session);
 
     if (!boardService.update(board)) {
       throw new Exception("게시글을 변경할 수 없습니다!");
@@ -107,11 +116,11 @@ public class BoardController {
   }
 
   @GetMapping("delete")
-  public String delete(HttpServletRequest request) throws Exception {
-    int no = Integer.parseInt(request.getParameter("no"));
+  public String delete(
+      @RequestParam("no") int no,
+      HttpSession session) throws Exception {
 
-    checkOwner(no, request.getSession());
-
+    checkOwner(no,session);
     if(!boardService.delete(no)) {
       throw new Exception("게시글을 삭제할 수 없습니다.");
     }
@@ -120,12 +129,13 @@ public class BoardController {
   }
 
   @GetMapping("fileDelete")
-  public String fileDelete(HttpServletRequest request) throws Exception {
-    int no = Integer.parseInt(request.getParameter("no")); 
+  public String fileDelete(
+      @RequestParam("no") int no,
+      HttpSession session) throws Exception {
 
     AttachedFile attachedFile = boardService.getAttachedFile(no);
 
-    Member loginMember = (Member) request.getSession().getAttribute("loginMember");
+    Member loginMember = (Member) session.getAttribute("loginMember");
     Board board = boardService.get(attachedFile.getBoardNo());
 
     if (board.getWriter().getNo() != loginMember.getNo()) {
