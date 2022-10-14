@@ -35,26 +35,27 @@ public class ContextLoaderListener implements ServletContextListener {
 
       // 자바 코드로 서블릿 객체를 직접 생성하여 서버에 등록하기
       DispatcherServlet servlet = new DispatcherServlet(iocContainer);
-      Dynamic config = ctx.addServlet("DispatcherServlet", servlet);
-      config.addMapping("/service/*");
+      Dynamic config = ctx.addServlet("app", servlet);
+      config.addMapping("/app/*");
       config.setMultipartConfig(new MultipartConfigElement(
           this.getClass().getAnnotation(MultipartConfig.class)));
       config.setLoadOnStartup(1); // 웹 애플리케이션을 시작할 때 프론트 컨트롤러를 자동 생성.
 
-      // 필터 등록
+      // "app" 이름의 프론트 컨트롤러에 필터를 붙인다.
       CharacterEncodingFilter filter = new CharacterEncodingFilter("UTF-8");
       FilterRegistration.Dynamic filterConfig = ctx.addFilter("CharacterEncodingFilter", filter); // 필터를 설정하는 설정 객체를 리턴
       filterConfig.addMappingForServletNames( // 설정 객체에 서블릿 필터로 연결하겠다.
           EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE),
           false, // 서블릿을 사용하기 전에 이 필터를 적용하라
-          "DispatcherServlet"); // 필터 이름을 적용했기 때문에 다른 서블릿은 안됨!
+          "app"); // 필터 이름을 적용했기 때문에 다른 서블릿은 안됨!
 
+      // 특정 URL에 필터를 붙인다.
       AdminCheckFilter adminFilter = new AdminCheckFilter();
       FilterRegistration.Dynamic adminFilterConfig = ctx.addFilter("AdminCheckFilter", adminFilter);
       adminFilterConfig.addMappingForUrlPatterns(
           EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE),
           false,
-          "/service/member/*");
+          "/app/member/*");
 
       LoginCheckFilter loginFilter = new LoginCheckFilter();
       FilterRegistration.Dynamic loginFilterConfig = ctx.addFilter("LoginCheckFilter", loginFilter);
