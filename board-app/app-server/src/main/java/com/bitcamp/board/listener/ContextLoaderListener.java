@@ -33,6 +33,9 @@ public class ContextLoaderListener implements ServletContextListener {
 
       ServletContext ctx = sce.getServletContext();
 
+      // 웹 애플리케이션의 루트 경로를 ServletContext 보관소에 저장해 둔다.
+      ctx.setAttribute("contextPath", ctx.getContextPath());
+
       // 자바 코드로 서블릿 객체를 직접 생성하여 서버에 등록하기
       DispatcherServlet servlet = new DispatcherServlet(iocContainer);
       Dynamic config = ctx.addServlet("app", servlet);
@@ -62,7 +65,7 @@ public class ContextLoaderListener implements ServletContextListener {
       loginFilterConfig.addMappingForUrlPatterns(
           EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE),
           false,
-          "/service/*");
+          "/app/*");
 
     } catch (Exception e) {
       e.printStackTrace();

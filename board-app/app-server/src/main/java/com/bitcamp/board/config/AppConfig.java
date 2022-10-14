@@ -24,14 +24,14 @@ public class AppConfig {
   // 이름을 지정하지 않으면 메소드 이름으로 보관한다.
   //  @Bean("TransactionManager")
   @Bean
-  public PlatformTransactionManager TransactionManager(DataSource ds) {
+  public PlatformTransactionManager transactionManager(DataSource ds) {
     System.out.println("createTransactionManager() 호출됨!");
 
     return new DataSourceTransactionManager(ds);
   }
 
   @Bean
-  public DataSource DataSource() {
+  public DataSource dataSource() {
     System.out.println("createDataSource() 호출됨!");
 
     DriverManagerDataSource ds = new DriverManagerDataSource();
@@ -46,13 +46,13 @@ public class AppConfig {
   // 도메인 객체로 받는 일을 할 도우미 객체를 등록한다.
   // 이 객체가 등록된 경우 multipart/form-data를 도메인 객체로 받을 수 있다.
   @Bean
-  public MultipartResolver MultipartResolver() {
+  public MultipartResolver multipartResolver() {
     return new StandardServletMultipartResolver();
   }
 
   // Spring WebMVC의 기본 ViewResolver를 교체한다.
   @Bean
-  public ViewResolver ViewResolver() {
+  public ViewResolver viewResolver() {
     InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
     viewResolver.setViewClass(JstlView.class); // 주어진 URL을 처리할 객체 -> JSP를 실행시켜주는 객체
     viewResolver.setPrefix("/WEB-INF/jsp/");
