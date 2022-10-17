@@ -15,7 +15,6 @@ public class DatabaseConfig {
   @Bean
   public PlatformTransactionManager transactionManager(DataSource ds) {
     System.out.println("PlatformTransactionManager 객체 생성!");
-
     return new DataSourceTransactionManager(ds);
   }
 

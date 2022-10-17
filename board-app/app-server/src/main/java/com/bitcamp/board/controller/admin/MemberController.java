@@ -40,7 +40,6 @@ public class MemberController {
 
   @GetMapping("detail")
   public void detail(int no, Map map) throws Exception {
-
     Member member = memberService.get(no);
 
     if (member == null) {
