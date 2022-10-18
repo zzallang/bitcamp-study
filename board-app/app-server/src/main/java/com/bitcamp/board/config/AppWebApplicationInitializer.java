@@ -11,7 +11,7 @@ public class AppWebApplicationInitializer extends AbstractAnnotationConfigDispat
 
   @Override
   protected Class<?>[] getRootConfigClasses() {
-    return new Class<?>[] {RootConfig.class, DatabaseConfig.class};
+    return new Class<?>[] {RootConfig.class, DatabaseConfig.class, MybatisConfig.class};
   }
 
   @Override

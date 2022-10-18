@@ -15,7 +15,7 @@
 </style>
 </head>
 <body>
-  <h1>게시글(JSP + Servlet + EL + JSPL)</h1>
+  <h1>게시글(JSP + Servlet + EL + JSTL)</h1>
   <a href='form'>새 글</a>
   <table border='1'>
    <tr>
