@@ -8,11 +8,7 @@ public interface BoardDao {
 
   int insert(Board board) throws Exception;
 
-  Board findByNo1(int no) throws Exception;
-
-  Board findByNo2(int no) throws Exception;
-
-  Board findByNo3(int no) throws Exception;
+  Board findByNo(int no) throws Exception;
 
   int update(Board board) throws Exception;
 
