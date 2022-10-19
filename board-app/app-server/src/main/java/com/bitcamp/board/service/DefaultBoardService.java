@@ -2,7 +2,6 @@ package com.bitcamp.board.service;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -19,14 +18,14 @@ public class DefaultBoardService implements BoardService {
   PlatformTransactionManager txManager; 
 
   @Autowired 
-  @Qualifier("mybatisBoardDao") 
+  //  @Qualifier("mybatisBoardDao") // 
   BoardDao boardDao;
 
   @Override
   public void add(Board board) throws Exception {
     // 트랜잭션 동작 방법을 정의한다.
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-    def.setName("SomeTxName");
+    def.setName("tx1");
     def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
     TransactionStatus status = txManager.getTransaction(def);
@@ -38,7 +37,10 @@ public class DefaultBoardService implements BoardService {
       }
 
       // 2) 첨부파일 등록
-      boardDao.insertFiles(board);
+      if (board.getAttachedFiles().size() > 0) {
+        boardDao.insertFiles(board);
+      }
+
       txManager.commit(status);
 
     } catch (Exception e) {
@@ -51,7 +53,7 @@ public class DefaultBoardService implements BoardService {
   public boolean update(Board board) throws Exception {
     // 트랜잭션 동작 방법을 정의한다.
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-    def.setName("SomeTxName");
+    def.setName("tx1");
     def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
     TransactionStatus status = txManager.getTransaction(def);
@@ -62,7 +64,9 @@ public class DefaultBoardService implements BoardService {
         return false;
       }
       // 2) 첨부파일 추가
-      boardDao.insertFiles(board);
+      if (board.getAttachedFiles().size() > 0) {
+        boardDao.insertFiles(board);
+      }
 
       txManager.commit(status);
       return true;
@@ -93,7 +97,7 @@ public class DefaultBoardService implements BoardService {
     // 트랜잭션 동작 방법을 정의한다.
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();
     // explicitly setting the transaction name is something that can be done only programmatically
-    def.setName("SomeTxName");
+    def.setName("tx1");
     def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
     TransactionStatus status = txManager.getTransaction(def);
@@ -129,11 +133,3 @@ public class DefaultBoardService implements BoardService {
   }
 
 }
-
-
-
-
-
-
-
-
