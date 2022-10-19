@@ -26,6 +26,8 @@ public class DatabaseConfig {
     return new DataSourceTransactionManager(ds);
   }
 
+  // ${jdbc.url} ==> .properties 파일에서 jdbc.url 이름으로 저장된 값을 가져온다.
+  // @Value("...") ==> 애노테이션에 지정된 문자열을 파라미터 변수에 전달한다.
   @Bean
   public DataSource dataSource(
       @Value("${jdbc.driverClassName}") String driverClassName,

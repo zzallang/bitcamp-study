@@ -39,7 +39,9 @@ public class DefaultBoardService implements BoardService {
       return false;
     }
     // 2) 첨부파일 추가
-    boardDao.insertFiles(board);
+    if (board.getAttachedFiles().size() > 0) {
+      boardDao.insertFiles(board);
+    }
 
     return true;
   }
