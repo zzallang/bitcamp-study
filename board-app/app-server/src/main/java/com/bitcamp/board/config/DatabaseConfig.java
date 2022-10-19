@@ -1,6 +1,7 @@
 package com.bitcamp.board.config;
 
 import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -26,13 +27,18 @@ public class DatabaseConfig {
   }
 
   @Bean
-  public DataSource dataSource() {
+  public DataSource dataSource(
+      @Value("${jdbc.driverClassName}") String driverClassName,
+      @Value("${jdbc.url}") String url,
+      @Value("${jdbc.username}") String username,
+      @Value("${jdbc.password}") String password ) {
+
     System.out.println("Datasource 객체 생성!");
     DriverManagerDataSource ds = new DriverManagerDataSource();
-    ds.setDriverClassName("org.mariadb.jdbc.Driver"); 
-    ds.setUrl("jdbc:mariadb://localhost:3306/studydb");
-    ds.setUsername("study");
-    ds.setPassword("1111");
+    ds.setDriverClassName(driverClassName); 
+    ds.setUrl(url);
+    ds.setUsername(username);
+    ds.setPassword(password);
     return ds;
   }
 
