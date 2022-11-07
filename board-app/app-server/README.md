@@ -1,8 +1,10 @@
-# 044. 통신 방식을 Stateful에서 Stateless로 변경하기
+### 090. 서블릿 컨테이너 교체하기: Undertow 서블릿 컨테이너
 
 ## 작업 내용
 
-### 1단계 - ClientApp 에서 서버에 연결하는 방식을 제거한다.
+### 1단계 - Undertow 서블릿 컨테이너를 프로젝트에 삽입한다.
 
-- com.bitcamp.board.ClientApp 클래스 변경
-- com.bitcamp.board.handler.XxxHandler 클래스 변경
+- build.gradle 변경
+  - 기존의 tomcat 서버를 제거한다.
+  - Undertow 라이브러리를 추가한다.
+ 
